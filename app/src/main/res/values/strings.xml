@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Flowpay</string>
+    <string name="app_name">WavePay</string>
     
     <!-- Setup Screen Strings -->
-    <string name="setup_flowpay">Setup Flowpay</string>
+    <string name="setup_flowpay">Set up WavePay</string>
     <string name="configure_upi_payments">Configure your UPI payments</string>
     <string name="bank_selection">Bank Selection</string>
     <string name="choose_primary_bank">Choose your primary bank for UPI payments</string>
@@ -12,8 +12,8 @@
     <string name="secondary_sim">Secondary SIM</string>
     <string name="complete_setup">Complete Setup</string>
     <string name="disclaimer">Disclaimer</string>
-    <string name="disclaimer_summary">Flowpay never touches your money or your UPI PIN. It only dials your bank\'s *99# / UPI 123 flow for you. Tap to read the full disclaimer.</string>
-    <string name="disclaimer_text">Flowpay is a free, open-source app. It is not a bank, wallet, or payment processor, and it never holds, moves, or has access to your money.\n\nAll Flowpay does is dial for you. It automates your bank\'s *99# / UPI 123 (UPI 123PAY) menu. Every payment is authorised and processed directly by you, your bank, and NPCI over your mobile network, exactly as if you had dialled it yourself. Flowpay is not affiliated with or endorsed by NPCI or any bank.\n\nYour UPI PIN never touches Flowpay. The app does not use Android accessibility services, screen reading, or any form of input capture. You enter your PIN only inside your bank\'s own *99# / IVR flow, where Flowpay cannot see it, intercept it, or store it.\n\nYour data stays on your device. Flowpay reads incoming bank SMS only while a payment is in progress, and only to detect the confirmation. It never uploads your messages, contacts, or transaction history anywhere.\n\nBy continuing, you confirm that you have read and understood this.</string>
+    <string name="disclaimer_summary">WavePay never touches your money or your UPI PIN. It only dials your bank\'s *99# / UPI 123 flow for you. Tap to read the full disclaimer.</string>
+    <string name="disclaimer_text">WavePay is a free, open-source app. It is not a bank, wallet, or payment processor, and it never holds, moves, or has access to your money.\n\nAll WavePay does is dial for you. It automates your bank\'s *99# / UPI 123 (UPI 123PAY) menu. Every payment is authorised and processed directly by you, your bank, and NPCI over your mobile network, exactly as if you had dialled it yourself. WavePay is not affiliated with or endorsed by NPCI or any bank.\n\nYour UPI PIN never touches WavePay. The app does not use Android accessibility services, screen reading, or any form of input capture. You enter your PIN only inside your bank\'s own *99# / IVR flow, where WavePay cannot see it, intercept it, or store it.\n\nYour data stays on your device. WavePay reads incoming bank SMS only while a payment is in progress, and only to detect the confirmation. It never uploads your messages, contacts, or transaction history anywhere.\n\nBy continuing, you confirm that you have read and understood this.</string>
     
     <!-- Bank Names -->
     
@@ -35,10 +35,10 @@
          release builds are minified, so `e.message` there reads as an
          R8-obfuscated class name. The detail belongs in the adjacent
          Log.e(TAG, "…", e) call, which carries the throwable. -->
-    <string name="error_permissions_denied">Some permissions were denied. Flowpay may not work correctly without them.</string>
-    <string name="error_call_permission_denied">Flowpay needs permission to place the call.</string>
+    <string name="error_permissions_denied">Some permissions were denied. WavePay may not work correctly without them.</string>
+    <string name="error_call_permission_denied">WavePay needs permission to place the call.</string>
     <string name="error_call_failed">Could not start the payment call. Please try again.</string>
-    <string name="error_audio_permission">Flowpay needs permission to adjust call audio.</string>
+    <string name="error_audio_permission">WavePay needs permission to adjust call audio.</string>
     <string name="error_audio_lower_failed">Could not lower the call volume.</string>
     <string name="error_audio_restore_failed">Could not restore the call volume.</string>
     <string name="error_qr_scanner_init">Could not open the QR scanner.</string>
@@ -49,7 +49,7 @@
     <string name="error_enter_phone_and_amount">Enter both a phone number and an amount.</string>
     <string name="error_invalid_phone_number">Enter a valid 10-digit phone number.</string>
     <string name="error_invalid_amount">Enter a valid amount.</string>
-    <string name="error_phone_permission_required">Flowpay needs phone permissions to place the payment call.</string>
+    <string name="error_phone_permission_required">WavePay needs phone permissions to place the payment call.</string>
     <string name="error_payment_not_started">The payment could not be started. Please try again.</string>
     <string name="error_call_permission_required_ussd">Phone call permission is required to test USSD.</string>
     <string name="error_call_permission_required_payments">Phone call permission is required for USSD payments.</string>
@@ -124,16 +124,18 @@
     <string name="status_label_success">Success</string>
     <string name="status_label_pending">Pending</string>
     <string name="status_label_unverified">Unverified</string>
-    <string name="status_label_needs_review">Check</string>
+    <string name="status_label_needs_review">Needs review</string>
     <string name="status_label_cancelled">Cancelled</string>
     <string name="status_label_failed">Failed</string>
+    <string name="status_label_unknown">Outcome unknown</string>
 
     <!-- Transaction status explainers -->
     <string name="status_explainer_pending">Waiting for your bank\'s confirmation SMS.</string>
-    <string name="status_explainer_unverified">No confirmation SMS arrived. The payment may still have gone through — check your bank statement or SMS inbox before retrying.</string>
+    <string name="status_explainer_unverified">Do not pay again until you have checked your bank statement or SMS inbox.</string>
     <string name="status_explainer_cancelled">The payment flow ended before completing. No money should have moved.</string>
     <string name="status_explainer_failed">Your bank reported this payment as failed. Any debited amount is normally auto-reversed.</string>
     <string name="status_explainer_needs_review">A bank SMS arrived during this payment but its amount didn\'t match. Check your bank statement before retrying.</string>
+    <string name="status_explainer_unknown">The payment outcome could not be confirmed. Check your bank statement or SMS inbox before paying again.</string>
 
     <!-- Payment result notifications -->
     <string name="notif_channel_payment_results">Payment results</string>
@@ -144,6 +146,9 @@
     <string name="payment_status_failed">Payment Failed</string>
     <string name="payment_status_needs_review">Check This Payment</string>
     <string name="payment_status_unverified">No Confirmation Received</string>
+    <string name="payment_status_cancelled">Payment Cancelled</string>
+    <string name="payment_status_pending">Waiting for Confirmation</string>
+    <string name="payment_status_unknown">Outcome Unknown</string>
     <string name="label_bank">Bank</string>
     <string name="label_bank_reference">Bank reference</string>
     <string name="label_date_time">Date &amp; Time</string>
@@ -156,7 +161,7 @@
     <string name="recipient_from">From</string>
 
     <!-- Call overlay (shown during the payment call) -->
-    <string name="overlay_secure_transfer">Secure Transfer</string>
+    <string name="overlay_secure_transfer">Payment steps</string>
     <string name="overlay_processing_payment">Processing Payment</string>
     <string name="overlay_amount">Amount</string>
     <string name="overlay_to">To</string>
@@ -164,7 +169,7 @@
     <string name="overlay_terminate">Cancel payment</string>
     <string name="overlay_connecting">Connecting to the UPI service…</string>
     <string name="overlay_sending_request">Sending your payment request…</string>
-    <string name="overlay_pin_notice">Flowpay never asks for your UPI PIN. Your bank will call you — enter your PIN on that call.</string>
+    <string name="overlay_pin_notice">WavePay never sees your UPI PIN. Enter it only in your bank\'s official payment flow.</string>
     <string name="overlay_request_sent">Request sent. Waiting for your bank\'s confirmation SMS…</string>
     <string name="amount_rupees">₹%1$s</string>
     <string name="percent_format">%1$d%%</string>
@@ -200,6 +205,28 @@
     <string name="settings_back">Back</string>
     <string name="settings_not_set">Not set</string>
     <string name="settings_clear_data_title">Clear App Data</string>
+    <string name="settings_section_bank_sim">Bank and SIM</string>
+    <string name="settings_section_permissions">Permissions</string>
+    <string name="settings_section_privacy">Privacy</string>
+    <string name="settings_bank">Bank</string>
+    <string name="settings_primary_sim">Primary SIM</string>
+    <string name="settings_phone_permission">Phone</string>
+    <string name="settings_phone_permission_reason">Used to place payment calls and follow call state.</string>
+    <string name="settings_camera_permission">Camera</string>
+    <string name="settings_camera_permission_reason">Used only to scan a payment QR code.</string>
+    <string name="settings_sms_permission">SMS</string>
+    <string name="settings_sms_permission_reason">Checks bank confirmations only during a payment.</string>
+    <string name="settings_contacts_permission">Contacts</string>
+    <string name="settings_contacts_permission_reason">Optional; used to select a payee by name.</string>
+    <string name="settings_overlay_permission">Payment guidance</string>
+    <string name="settings_overlay_permission_reason">Keeps guidance visible during a bank or UPI call.</string>
+    <string name="settings_privacy_local">Your payment history and messages stay on this device.</string>
+    <string name="settings_privacy_pin">WavePay never sees or stores your UPI PIN.</string>
+    <string name="settings_granted">Granted</string>
+    <string name="settings_not_granted">Not granted</string>
+    <string name="settings_grant">Grant</string>
+    <string name="settings_configuration">Configuration</string>
+    <string name="settings_clear_data_warning">This permanently deletes your transaction history on this device and resets settings. This cannot be undone.</string>
 
     <!-- Contact picker -->
     <string name="contacts_search_hint">Search contacts…</string>
@@ -209,11 +236,55 @@
     <string name="home_field_mobile_hint">10 digits</string>
     <string name="home_field_amount_label">Amount (₹)</string>
     <string name="home_field_amount_hint">Enter amount</string>
-    <string name="home_scan_qr">Scan QR Code</string>
+    <string name="home_scan_qr">Scan QR</string>
     <string name="home_scan_opening">Opening…</string>
     <!-- Shown on the Scan QR button while the *99# test has not passed, the
          same way Pay Contact reads "Set up UPI 123 IVR" before its test. -->
     <string name="home_setup_ussd">Set up *99#</string>
+    <string name="home_title">WavePay</string>
+    <string name="home_subtitle">Payments without internet</string>
+    <string name="home_connected_bank">Bank</string>
+    <string name="home_works_offline">Works without internet</string>
+    <string name="home_pay_by_number">Pay by number</string>
+    <string name="home_recent_payees">Recent payees</string>
+    <string name="home_recent_payments">Recent payments</string>
+    <string name="home_recent_payments_subtitle">Your latest transactions</string>
+    <string name="home_view_all">View all</string>
+    <string name="home_loading_transactions">Loading transactions…</string>
+    <string name="home_failed_to_load">Could not load transactions</string>
+    <string name="home_retry">Retry</string>
+    <string name="home_no_transactions">No transactions yet</string>
+    <string name="home_history_empty">Your payment history will appear here.</string>
+    <string name="home_or">or</string>
+    <string name="home_select_contact">Select contact</string>
+    <string name="home_payee_unknown">Payee</string>
+    <string name="permission_phone_title">Phone permission</string>
+    <string name="permission_phone_reason">WavePay needs phone access to place the call to your bank or UPI service. WavePay never sees your UPI PIN.</string>
+    <string name="permission_sms_title">SMS permission</string>
+    <string name="permission_sms_reason">WavePay checks bank confirmation SMS only while a payment is in progress, to tell you whether it was confirmed. Messages stay on this device.</string>
+    <string name="permission_contacts_title">Contacts permission</string>
+    <string name="permission_contacts_reason">Allow contacts access only if you want to choose a recipient from your address book.</string>
+    <string name="permission_overlay_title">Display over other apps</string>
+    <string name="permission_overlay_reason">This keeps the payment guidance visible while the phone call is on screen.</string>
+    <string name="permission_grant">Allow</string>
+    <string name="permission_granted">Granted</string>
+    <string name="permission_not_granted">Not granted</string>
+    <string name="setup_permission_step">Permission %1$d of %2$d</string>
+    <string name="setup_permission_phone_title">Allow phone access</string>
+    <string name="setup_permission_sms_title">Allow SMS access</string>
+    <string name="setup_permission_phone_reason">WavePay uses phone access to place the call to the UPI service and follow call state. It never sees your UPI PIN.</string>
+    <string name="setup_permission_sms_reason">WavePay reads bank confirmation SMS only while a payment is in progress. This lets it report the bank\'s result; messages stay on this device.</string>
+    <string name="setup_permission_continue">Continue</string>
+    <string name="setup_permission_skip">Not now</string>
+    <string name="setup_permission_done">Continue setup</string>
+    <string name="setup_permission_dismissed">You can grant this permission later in Settings.</string>
+    <string name="call_step_follow_prompts">Follow the prompts from your bank or UPI service.</string>
+    <string name="call_step_pin">Enter your UPI PIN only in the bank\'s official payment flow.</string>
+    <string name="call_step_wait">Wait for a confirmation SMS before treating the payment as complete.</string>
+    <string name="qr_confirm_title">Review payment details</string>
+    <string name="qr_confirm_details">Payee: %1$s\nUPI ID: %2$s\nAmount: %3$s\nPer-transaction limit: %4$s</string>
+    <string name="qr_amount_not_in_code">Not specified in this QR; enter it in the bank menu.</string>
+    <string name="qr_limit_bank_rail">Limits depend on your bank and the UPI rail.</string>
 
     <!-- Setup screen -->
     <string name="setup_step_1_of_2">Step 1 of 2</string>
@@ -244,6 +315,17 @@
     <string name="history_group_today">Today</string>
     <string name="history_group_yesterday">Yesterday</string>
     <string name="history_group_this_week">This Week</string>
+    <string name="history_filter_all">All</string>
+    <string name="history_filter_success">Success</string>
+    <string name="history_filter_needs_review">Needs review</string>
+    <string name="history_filter_unverified">Unverified</string>
+    <string name="history_filter_failed">Failed</string>
+    <string name="history_filter_cancelled">Cancelled</string>
+    <string name="history_error_title">Could not load transactions</string>
+    <string name="history_empty_title">No transactions yet</string>
+    <string name="history_empty_search">No matching transactions</string>
+    <string name="history_empty_body">Completed and pending payments will appear here.</string>
+    <string name="history_empty_search_body">Try another search or status filter.</string>
 
     <!-- Transaction detail dialog -->
     <string name="detail_title">Transaction Details</string>
@@ -253,6 +335,7 @@
     <string name="detail_label_phone_number">Phone Number</string>
     <string name="detail_bank_confirmation">Bank Confirmation</string>
     <string name="detail_delete_transaction">Delete Transaction</string>
+    <string name="detail_copy">Copy</string>
 
     <!-- USSD setup progress dialog -->
     <string name="ussd_dlg_initializing">Initializing…</string>

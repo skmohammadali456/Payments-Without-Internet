@@ -2,39 +2,44 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="flowpay_green">#FF4CAF50</color>
+    <color name="flowpay_green">#FF146C43</color>
     
     <!-- Setup Screen Colors -->
-    <color name="setup_text_secondary">#FF888888</color>
-    <color name="setup_text_tertiary">#FF4A4A4A</color>
+    <color name="setup_text_secondary">#FF475467</color>
+    <color name="setup_text_tertiary">#FF344054</color>
 
     <!-- Payment Success Colors -->
-    <color name="transaction_primary">#FF5E97D1</color>
+    <color name="transaction_primary">#FF155B73</color>
 
     <!-- QR Scanner Colors -->
 
     <!-- Feedback Colors -->
-    <color name="error_red">#FFF44336</color>
-    <color name="warning_orange">#FFFF9800</color>
+    <color name="error_red">#FFB42318</color>
+    <color name="warning_orange">#FF8A4B08</color>
     <!-- UNVERIFIED = outcome unknown: neutral grey, never green/red -->
-    <color name="unverified_grey">#FF9E9E9E</color>
+    <color name="unverified_grey">#FF667085</color>
 
     <!-- General UI Colors -->
-    <color name="background_secondary">#FFF5F5F5</color>
+    <color name="background_secondary">#FFF5F7F8</color>
+    <color name="screen_background">#FFF5F7F8</color>
+    <color name="surface_card_light">#FFFFFFFF</color>
+    <color name="text_primary_light">#FF101828</color>
+    <color name="text_secondary_light">#FF475467</color>
+    <color name="outline_light">#FFD0D8DC</color>
 
     <!-- Dark-theme View/XML tokens (Compose screens use ui/theme/Color.kt;
          these mirror the same ramp for the classic-View layouts). -->
-    <color name="surface_card_dark">#FF1A1A1A</color>
-    <color name="surface_deep_dark">#FF0D0D0D</color>
-    <color name="divider_dark">#FF333333</color>
-    <color name="text_secondary_dark">#FF888888</color>
+    <color name="surface_card_dark">#FFFFFFFF</color>
+    <color name="surface_deep_dark">#FFF5F7F8</color>
+    <color name="divider_dark">#FFD0D8DC</color>
+    <color name="text_secondary_dark">#FF475467</color>
 
     <!-- In-call overlay card (light "frosted" surface — its own mini palette) -->
-    <color name="overlay_text_primary">#FF2C2C2C</color>
-    <color name="overlay_text_secondary">#FF757575</color>
-    <color name="overlay_icon_gray">#FF424242</color>
-    <color name="overlay_divider_light">#FFE0E0E0</color>
-    <color name="overlay_alert_red">#FFFF6B6B</color>
+    <color name="overlay_text_primary">#FF101828</color>
+    <color name="overlay_text_secondary">#FF475467</color>
+    <color name="overlay_icon_gray">#FF344054</color>
+    <color name="overlay_divider_light">#FFD0D8DC</color>
+    <color name="overlay_alert_red">#FFB42318</color>
     <!-- Backing for the QR scanner's inline "not a valid UPI QR" banner -->
-    <color name="scan_error_banner_bg">#F21A1113</color>
+    <color name="scan_error_banner_bg">#FFFEE4E2</color>
 </resources>

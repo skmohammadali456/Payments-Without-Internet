@@ -6,7 +6,7 @@ package com.flowpay.app.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // ─────────────────────────────────────────────────────────────────────────
-// Flowpay design tokens — dark theme.
+// WavePay design tokens — light theme.
 //
 // Every Compose screen draws from these; inline Color(0x…) literals outside
 // this package are a CI failure (see the palette-gate step in build.yml).
@@ -17,49 +17,47 @@ import androidx.compose.ui.graphics.Color
 // ─────────────────────────────────────────────────────────────────────────
 
 // Surfaces (darkest → lightest)
-val FlowpayBlack = Color(0xFF000000)
+val FlowpayBlack = Color(0xFFFFFFFF)
 
 /** Screen background behind cards/lists. */
-val FlowpaySurfaceDim = Color(0xFF0A0A0A)
+val FlowpaySurfaceDim = Color(0xFFF5F7F8)
 
 /** Card / dialog surface. */
-val FlowpayDarkGray = Color(0xFF1A1A1A)
+val FlowpayDarkGray = Color(0xFFFFFFFF)
 
 /** Elevated surface: input fields, chips, avatars. */
-val FlowpayMediumGray = Color(0xFF2A2A2A)
+val FlowpayMediumGray = Color(0xFFEEF2F4)
 
 /** Borders, dividers, inactive track. */
-val FlowpayLightGray = Color(0xFF333333)
+val FlowpayLightGray = Color(0xFFD0D8DC)
 
 /** Stronger outline / disabled container. */
-val FlowpayOutlineGray = Color(0xFF4A4A4A)
+val FlowpayOutlineGray = Color(0xFF667780)
 
 /** Disabled content / faint hint. */
-val FlowpayDisabledGray = Color(0xFF555555)
+val FlowpayDisabledGray = Color(0xFF667780)
 
 // Text (dimmest → brightest)
 /** Placeholder / hint text. */
-val FlowpayTextGray = Color(0xFF666666)
+val FlowpayTextGray = Color(0xFF667085)
 
 /** Secondary text: captions, labels, timestamps. */
-val FlowpayTextLightGray = Color(0xFF888888)
+val FlowpayTextLightGray = Color(0xFF475467)
 
 /** Long-form body text on dark dialogs. */
-val FlowpayTextPale = Color(0xFFCCCCCC)
+val FlowpayTextPale = Color(0xFF344054)
 
-val FlowpayTextWhite = Color(0xFFFFFFFF)
+val FlowpayTextWhite = Color(0xFF101828)
 
 // Card Colors (light card variant)
-val FlowpayCardBackground = Color(0xFFE8E8E8)
-val FlowpayCardText = Color(0xFF000000)
-val FlowpayCardSubtext = Color(0xFF4A4A4A)
+val FlowpayCardBackground = Color(0xFFFFFFFF)
+val FlowpayCardText = Color(0xFF101828)
+val FlowpayCardSubtext = Color(0xFF475467)
 
 // Accents
-val FlowpayAccentBlue = Color(0xFF4A90E2)
-val FlowpayAccentGreen = Color(0xFF4CAF50)
-
-/** Bright green used as the light end of success gradients. */
-val FlowpayAccentGreenBright = Color(0xFF43E97B)
+val FlowpayAccentBlue = Color(0xFF155B73)
+val FlowpayAccentGreen = Color(0xFF146C43)
+val FlowpayAccentGreenBright = Color(0xFF146C43)
 
 // ─────────────────────────────────────────────────────────────────────────
 // Transaction status palette. One color per outcome, used identically in
@@ -68,17 +66,17 @@ val FlowpayAccentGreenBright = Color(0xFF43E97B)
 // ─────────────────────────────────────────────────────────────────────────
 
 /** SUCCESS — bank confirmed. */
-val FlowpayStatusSuccess = FlowpayAccentGreen
+val FlowpayStatusSuccess = Color(0xFF146C43)
 
 /** FAILED / declined, and destructive actions (delete, clear). */
-val FlowpayStatusError = Color(0xFFF44336)
+val FlowpayStatusError = Color(0xFFB42318)
 
 /** NEEDS_REVIEW / PENDING — user attention required. */
-val FlowpayStatusWarning = Color(0xFFFF9800)
+val FlowpayStatusWarning = Color(0xFF8A4B08)
 
 /** UNVERIFIED / CANCELLED — outcome unknown or nothing happened. Neutral:
  *  deliberately neither success-green nor failure-red. */
-val FlowpayStatusNeutral = Color(0xFF9E9E9E)
+val FlowpayStatusNeutral = Color(0xFF667085)
 
 /**
  * The single mapping from a [com.flowpay.app.data.TransactionStatus] string
@@ -89,5 +87,5 @@ fun statusColor(status: String): Color = when (status.uppercase()) {
     "SUCCESS", "SUCCESSFUL", "COMPLETED" -> FlowpayStatusSuccess
     "FAILED", "DECLINED" -> FlowpayStatusError
     "PENDING", "NEEDS_REVIEW" -> FlowpayStatusWarning
-    else -> FlowpayStatusNeutral // UNVERIFIED, CANCELLED, unknown
+    else -> FlowpayStatusNeutral // UNVERIFIED, CANCELLED, and unknown values
 }
