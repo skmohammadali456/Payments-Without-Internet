@@ -320,12 +320,12 @@
     <string name="testcfg_ussd_reported_issue">You reported USSD didn\'t work — scan to pay is off. Tap to try setup again.</string>
     <string name="testcfg_enable_scan_payments">Enable pay via scanning payments</string>
     <string name="testcfg_enable_manual_payments">Enable manual payment entries</string>
-    <string name="testcfg_all_tests_passed_continue">All tests passed. Continue</string>
+    <string name="testcfg_all_tests_passed_continue">All Tests Passed! Continue</string>
     <string name="testcfg_continue_partial">Continue with partial setup</string>
     <string name="testcfg_complete_tests_to_continue">Complete tests to continue</string>
     <string name="testcfg_skip_for_now">Skip for now — payments may not work until tests pass</string>
     <string name="testcfg_call_consent_body">This places a real call to your carrier\'s *99# / UPI 123 service to check setup on your SIM. Standard call or USSD charges from your operator may apply.</string>
-    <string name="testcfg_header_icon_desc">Test configuration</string>
+    <string name="testcfg_header_icon_desc">Test</string>
     <string name="testcfg_title">Test Configuration</string>
     <string name="testcfg_step">Step 2 of 2</string>
     <string name="testcfg_intro">Complete these tests to verify your payment methods work correctly</string>

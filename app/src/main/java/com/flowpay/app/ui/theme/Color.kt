@@ -41,7 +41,7 @@ val FlowpayTextGray = Color(0xFF667085)
 /** Secondary text: captions, labels, timestamps. */
 val FlowpayTextSecondary = Color(0xFF475467)
 
-/** Long-form body text on dark dialogs. */
+/** Long-form body text on surfaces. */
 val FlowpayTextPale = Color(0xFF344054)
 
 val FlowpayOnSurface = Color(0xFF101828)
