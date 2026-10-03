@@ -28,6 +28,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.flowpay.app.R
 import com.flowpay.app.ui.theme.FlowpayAccentGreen
 import com.flowpay.app.ui.theme.FlowpaySurface
+import com.flowpay.app.ui.theme.FlowpayOnSurface
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayTextGray
 import com.flowpay.app.ui.theme.FlowpayTextSecondary

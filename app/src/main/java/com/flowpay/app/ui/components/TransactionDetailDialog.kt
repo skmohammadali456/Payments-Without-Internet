@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.flowpay.app.R
 import com.flowpay.app.data.Transaction
 import com.flowpay.app.ui.theme.FlowpaySurface
+import com.flowpay.app.ui.theme.FlowpayOnSurface
 import com.flowpay.app.ui.theme.FlowpayMediumGray
 import com.flowpay.app.ui.theme.FlowpayStatusError
 import com.flowpay.app.ui.theme.FlowpaySurfaceDim

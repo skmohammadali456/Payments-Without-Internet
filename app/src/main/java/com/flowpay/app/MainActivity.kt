@@ -118,6 +118,7 @@ import com.flowpay.app.ui.components.StatusIndicator
 import com.flowpay.app.ui.dialogs.ContactPickerDialog
 import com.flowpay.app.ui.theme.BlueAccentTheme
 import com.flowpay.app.ui.theme.FlowpaySurface
+import com.flowpay.app.ui.theme.FlowpayOnSurface
 import com.flowpay.app.ui.theme.FlowpayAccent
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
