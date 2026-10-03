@@ -140,7 +140,7 @@ class PaymentResultActivity : AppCompatActivity() {
         // blue heading, green amount). Non-success outcomes wear their status
         // color on circle + heading + amount so a FAILED result can never be
         // mistaken for a success at a glance. The glyph is always white.
-        when (status) {
+        when (status.uppercase(Locale.ROOT)) {
             TransactionStatus.FAILED -> {
                 statusText.text = getString(R.string.payment_status_failed)
                 statusExplainerText.text = getString(R.string.status_explainer_failed)
@@ -161,13 +161,31 @@ class PaymentResultActivity : AppCompatActivity() {
                 tickImageView.setImageResource(R.drawable.ic_check_white)
                 applySuccessAccent()
             }
-            else -> {
-                // UNVERIFIED, or any unexpected status — the outcome is not a
-                // confirmed success, so render it neutral (grey, question glyph)
-                // and NEVER fall open to the green success look. Only an explicit
-                // SUCCESS above earns the success styling.
+            TransactionStatus.PENDING -> {
+                statusText.text = getString(R.string.payment_status_pending)
+                statusExplainerText.text = getString(R.string.status_explainer_pending)
+                statusExplainerText.visibility = View.VISIBLE
+                tickImageView.setImageResource(R.drawable.ic_unverified)
+                applyStatusAccent(R.color.warning_orange)
+            }
+            TransactionStatus.CANCELLED -> {
+                statusText.text = getString(R.string.payment_status_cancelled)
+                statusExplainerText.text = getString(R.string.status_explainer_cancelled)
+                statusExplainerText.visibility = View.VISIBLE
+                tickImageView.setImageResource(R.drawable.ic_close)
+                applyStatusAccent(R.color.unverified_grey)
+            }
+            TransactionStatus.UNVERIFIED -> {
                 statusText.text = getString(R.string.payment_status_unverified)
                 statusExplainerText.text = getString(R.string.status_explainer_unverified)
+                statusExplainerText.visibility = View.VISIBLE
+                tickImageView.setImageResource(R.drawable.ic_unverified)
+                applyStatusAccent(R.color.unverified_grey)
+            }
+            else -> {
+                // Unknown values never fall open to the success styling.
+                statusText.text = getString(R.string.payment_status_unknown)
+                statusExplainerText.text = getString(R.string.status_explainer_unknown)
                 statusExplainerText.visibility = View.VISIBLE
                 tickImageView.setImageResource(R.drawable.ic_unverified)
                 applyStatusAccent(R.color.unverified_grey)
@@ -378,33 +396,12 @@ class PaymentResultActivity : AppCompatActivity() {
     }
 
     private fun setupSystemUI() {
-        // Make status bar and navigation bar black (minSdk 29 — no guard needed)
-        window.statusBarColor = Color.BLACK
-        window.navigationBarColor = Color.BLACK
-
-        // Black nav bar => light (white) buttons, via the compat controller
-        // instead of deprecated direct systemUiVisibility manipulation.
-        androidx.core.view.WindowInsetsControllerCompat(window, window.decorView)
-            .isAppearanceLightNavigationBars = false
-
-        // Hide status bar and navigation bar for immersive experience
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false)
-            window.insetsController?.let {
-                it.hide(WindowInsets.Type.statusBars())
-                it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            // API 29 has no WindowInsetsController — the legacy flags stay.
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
+        val surface = ContextCompat.getColor(this, R.color.screen_background)
+        window.statusBarColor = surface
+        window.navigationBarColor = surface
+        androidx.core.view.WindowInsetsControllerCompat(window, window.decorView).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
         }
     }
 

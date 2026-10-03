@@ -84,7 +84,7 @@ val FlowpayStatusNeutral = Color(0xFF667085)
  * functions that had been copy-pasted into multiple screens.
  */
 fun statusColor(status: String): Color = when (status.uppercase()) {
-    "SUCCESS", "SUCCESSFUL", "COMPLETED" -> FlowpayStatusSuccess
+    "SUCCESS" -> FlowpayStatusSuccess
     "FAILED", "DECLINED" -> FlowpayStatusError
     "PENDING", "NEEDS_REVIEW" -> FlowpayStatusWarning
     else -> FlowpayStatusNeutral // UNVERIFIED, CANCELLED, and unknown values

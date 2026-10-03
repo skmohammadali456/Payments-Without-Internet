@@ -46,7 +46,6 @@ import com.flowpay.app.SetupActivity
 import com.flowpay.app.data.SettingsRepository
 import com.flowpay.app.repository.TransactionRepository
 import com.flowpay.app.ui.theme.BlueAccentTheme
-import com.flowpay.app.ui.theme.FlowpayAccentGreenBright
 import com.flowpay.app.ui.theme.FlowpayDarkGray
 import com.flowpay.app.ui.theme.FlowpayDisabledGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
@@ -55,6 +54,7 @@ import com.flowpay.app.ui.theme.FlowpaySurfaceDim
 import com.flowpay.app.ui.theme.FlowpayTextGray
 import com.flowpay.app.ui.theme.FlowpayTextLightGray
 import com.flowpay.app.ui.theme.FlowpayTextPale
+import com.flowpay.app.ui.theme.FlowpayTextWhite
 import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -100,13 +100,15 @@ class SettingsActivity : ComponentActivity() {
 fun FlowpaySettingsTheme(content: @Composable () -> Unit) {
     val accentTheme = LocalFlowpayAccentTheme.current
     MaterialTheme(
-        colorScheme = darkColorScheme(
+        colorScheme = lightColorScheme(
             primary = accentTheme.primary,
             secondary = accentTheme.accent,
             background = FlowpaySurfaceDim,
             surface = FlowpayDarkGray,
-            onBackground = Color.White,
-            onSurface = Color.White
+            onBackground = FlowpayTextWhite,
+            onSurface = FlowpayTextWhite,
+            onPrimary = Color.White,
+            onSecondary = Color.White
         )
     ) {
         content()
@@ -248,7 +250,7 @@ fun SettingsScreen(
                         stringResource(R.string.settings_title),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        color = FlowpayTextWhite
                     )
                 },
                 navigationIcon = {
@@ -256,7 +258,7 @@ fun SettingsScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.settings_back),
-                            tint = Color.White
+                            tint = FlowpayTextWhite
                         )
                     }
                 },
@@ -274,19 +276,19 @@ fun SettingsScreen(
                 contentPadding = PaddingValues(bottom = 32.dp)
             ) {
                 // ═══ CONFIGURATION ═══
-                item { SectionHeader("CONFIGURATION") }
+                item { SectionHeader(stringResource(R.string.settings_section_bank_sim)) }
                 item {
                     GroupCard {
                         SettingsRow(
                             icon = Icons.Default.AccountBalance,
-                            title = "Bank",
+                            title = stringResource(R.string.settings_bank),
                             value = state.selectedBank.name,
                             onClick = { showBankPicker = true }
                         )
                         GroupDivider()
                         SettingsRow(
                             icon = Icons.Default.SimCard,
-                            title = "Primary SIM",
+                            title = stringResource(R.string.settings_primary_sim),
                             value = primarySim,
                             onClick = { showSimPicker = true }
                         )
@@ -295,13 +297,13 @@ fun SettingsScreen(
 
                 // ═══ PERMISSIONS ═══
                 item { Spacer(modifier = Modifier.height(8.dp)) }
-                item { SectionHeader("PERMISSIONS") }
+                item { SectionHeader(stringResource(R.string.settings_section_permissions)) }
                 item {
                     GroupCard {
                         PermissionRow(
                             icon = Icons.Default.Phone,
-                            title = "Phone",
-                            subtitle = "Calls & phone state",
+                            title = stringResource(R.string.settings_phone_permission),
+                            subtitle = stringResource(R.string.settings_phone_permission_reason),
                             granted = state.permissions["phone"] ?: false,
                             onRequest = {
                                 onRequestPermissions(
@@ -315,8 +317,8 @@ fun SettingsScreen(
                         GroupDivider()
                         PermissionRow(
                             icon = Icons.Default.CameraAlt,
-                            title = "Camera",
-                            subtitle = "QR code scanning",
+                            title = stringResource(R.string.settings_camera_permission),
+                            subtitle = stringResource(R.string.settings_camera_permission_reason),
                             granted = state.permissions["camera"] ?: false,
                             onRequest = {
                                 onRequestPermissions(arrayOf(Manifest.permission.CAMERA))
@@ -325,8 +327,8 @@ fun SettingsScreen(
                         GroupDivider()
                         PermissionRow(
                             icon = Icons.Default.Sms,
-                            title = "SMS",
-                            subtitle = "Bank payment confirmations",
+                            title = stringResource(R.string.settings_sms_permission),
+                            subtitle = stringResource(R.string.settings_sms_permission_reason),
                             granted = state.permissions["sms"] ?: false,
                             onRequest = {
                                 onRequestPermissions(arrayOf(Manifest.permission.RECEIVE_SMS))
@@ -335,8 +337,8 @@ fun SettingsScreen(
                         GroupDivider()
                         PermissionRow(
                             icon = Icons.Default.Contacts,
-                            title = "Contacts",
-                            subtitle = "Pay by contact",
+                            title = stringResource(R.string.settings_contacts_permission),
+                            subtitle = stringResource(R.string.settings_contacts_permission_reason),
                             granted = state.permissions["contacts"] ?: false,
                             onRequest = {
                                 onRequestPermissions(arrayOf(Manifest.permission.READ_CONTACTS))
@@ -345,29 +347,48 @@ fun SettingsScreen(
                     }
                 }
 
-                // ═══ ACTIONS ═══
+                // ═══ DATA ═══
                 item { Spacer(modifier = Modifier.height(8.dp)) }
-                item { SectionHeader("ACTIONS") }
+                item { SectionHeader(stringResource(R.string.settings_section_data)) }
                 item {
                     GroupCard {
                         SettingsRow(
                             icon = Icons.Default.DeleteForever,
-                            title = "Clear App Data",
-                            value = "Reset all settings",
+                            title = stringResource(R.string.settings_clear_data_title),
+                            value = stringResource(R.string.settings_reset_all),
                             destructive = true,
                             onClick = { showClearDataConfirm = true }
                         )
                     }
                 }
 
-                // ═══ ABOUT ═══
+                // ═══ PRIVACY AND ABOUT ═══
                 item { Spacer(modifier = Modifier.height(8.dp)) }
-                item { SectionHeader("ABOUT") }
+                item { SectionHeader(stringResource(R.string.settings_section_privacy)) }
+                item {
+                    GroupCard {
+                        Text(
+                            text = stringResource(R.string.settings_privacy_local),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = FlowpayTextWhite,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                        )
+                        GroupDivider()
+                        Text(
+                            text = stringResource(R.string.settings_privacy_pin),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = FlowpayTextWhite,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                        )
+                    }
+                }
+                item { Spacer(modifier = Modifier.height(8.dp)) }
+                item { SectionHeader(stringResource(R.string.settings_section_about)) }
                 item {
                     GroupCard {
                         SettingsRow(
                             icon = Icons.Default.Info,
-                            title = "Version",
+                            title = stringResource(R.string.settings_version),
                             // Read from the build, never hardcoded: this row
                             // once said "1.0.0" while the app shipped as 2.1.0.
                             value = BuildConfig.VERSION_NAME
@@ -375,7 +396,7 @@ fun SettingsScreen(
                         GroupDivider()
                         SettingsRow(
                             icon = Icons.Default.PhoneAndroid,
-                            title = "Android",
+                            title = stringResource(R.string.settings_android),
                             value = Build.VERSION.RELEASE
                         )
                     }
@@ -423,7 +444,7 @@ fun SettingsScreen(
         AlertDialog(
             onDismissRequest = { showClearDataConfirm = false },
             containerColor = FlowpayDarkGray,
-            titleContentColor = Color.White,
+            titleContentColor = FlowpayTextWhite,
             textContentColor = FlowpayTextPale,
             title = {
                 Text(
@@ -434,9 +455,7 @@ fun SettingsScreen(
             },
             text = {
                 Text(
-                    "This permanently deletes your entire transaction history and " +
-                        "resets all settings, then returns you to the setup screen. " +
-                        "This cannot be undone.",
+                    stringResource(R.string.settings_clear_data_warning),
                     fontSize = 14.sp,
                     lineHeight = 20.sp
                 )
@@ -532,7 +551,7 @@ private fun SettingsRow(
     val accent = LocalFlowpayAccentTheme.current
     val iconColor = if (destructive) FlowpayStatusError else accent.primary
     val iconBg = if (destructive) FlowpayStatusError.copy(alpha = 0.12f) else accent.primary.copy(alpha = 0.12f)
-    val titleColor = if (destructive) FlowpayStatusError else Color.White
+    val titleColor = if (destructive) FlowpayStatusError else FlowpayTextWhite
 
     Row(
         modifier = Modifier
@@ -637,7 +656,7 @@ private fun PermissionRow(
                 text = title,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color.White
+                color = FlowpayTextWhite
             )
             Text(
                 text = subtitle,
@@ -650,11 +669,11 @@ private fun PermissionRow(
         if (granted) {
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                color = FlowpayAccentGreenBright.copy(alpha = 0.12f)
+                color = FlowpayMediumGray
             ) {
                 Text(
-                    text = "Granted",
-                    color = FlowpayAccentGreenBright,
+                    text = stringResource(R.string.settings_granted),
+                    color = LocalFlowpayAccentTheme.current.primary,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
@@ -667,7 +686,7 @@ private fun PermissionRow(
                 modifier = Modifier.clickable(onClick = onRequest)
             ) {
                 Text(
-                    text = "Grant",
+                    text = stringResource(R.string.settings_grant),
                     color = accent.primary,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
@@ -695,10 +714,10 @@ private fun BankPickerDialog(
                 modifier = Modifier.padding(vertical = 20.dp)
             ) {
                 Text(
-                    text = "Select Bank",
+                    text = stringResource(R.string.settings_select_bank),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
+                    color = FlowpayTextWhite,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
                 )
 
@@ -718,13 +737,13 @@ private fun BankPickerDialog(
                                 text = bank.name,
                                 fontSize = 15.sp,
                                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                                color = if (isSelected) accent.primary else Color.White,
+                                color = if (isSelected) accent.primary else FlowpayTextWhite,
                                 modifier = Modifier.weight(1f)
                             )
                             if (isSelected) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Selected",
+                                    contentDescription = stringResource(R.string.settings_selected),
                                     tint = accent.primary,
                                     modifier = Modifier.size(20.dp)
                                 )
@@ -776,10 +795,10 @@ private fun SimPickerDialog(
         ) {
             Column(modifier = Modifier.padding(vertical = 20.dp)) {
                 Text(
-                    text = "Select Primary SIM",
+                    text = stringResource(R.string.settings_select_primary_sim),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
+                    color = FlowpayTextWhite,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
                 )
 
@@ -796,13 +815,13 @@ private fun SimPickerDialog(
                             text = name,
                             fontSize = 15.sp,
                             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                            color = if (isSelected) accent.primary else Color.White,
+                            color = if (isSelected) accent.primary else FlowpayTextWhite,
                             modifier = Modifier.weight(1f)
                         )
                         if (isSelected) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "Selected",
+                                contentDescription = stringResource(R.string.settings_selected),
                                 tint = accent.primary,
                                 modifier = Modifier.size(20.dp)
                             )

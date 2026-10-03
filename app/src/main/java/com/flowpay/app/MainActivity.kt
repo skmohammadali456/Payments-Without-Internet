@@ -168,9 +168,9 @@ class MainActivity : ComponentActivity() {
     ) {
         val granted = PermissionManager.canDrawOverlays(this)
         val message = if (granted) {
-            "Overlay permission granted. You can now proceed with the transfer."
+            getString(R.string.overlay_permission_granted)
         } else {
-            "Overlay permission is required for payment protection. Please enable it in Settings."
+            getString(R.string.overlay_permission_required)
         }
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
@@ -475,6 +475,12 @@ fun MainScreen(
 
     val transactionViewModel: TransactionViewModel = viewModel()
     val recentPayments by transactionViewModel.recentTransactions.collectAsState()
+    val recentPayees = remember(recentPayments) {
+        recentPayments
+            .filter { it.phoneNumber.isNotBlank() }
+            .distinctBy { it.phoneNumber }
+            .take(6)
+    }
     val selectedTransaction by transactionViewModel.selectedTransaction.collectAsState()
     val isLoading by transactionViewModel.isLoading.collectAsState()
     val error by transactionViewModel.error.collectAsState()
@@ -502,7 +508,7 @@ fun MainScreen(
         } else {
             Toast.makeText(
                 context,
-                "SMS permission is required to detect payment confirmations",
+                context.getString(R.string.error_sms_permission),
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -533,6 +539,26 @@ fun MainScreen(
                     postNotificationsLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
+        }
+    }
+
+    fun requestPayContact(payee: PaymentDetails? = null) {
+        prefilledPayee = payee?.let { it.recipientName to it.phoneNumber }
+        maybeAskNotifications()
+        val hasSms = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.RECEIVE_SMS
+        ) == PackageManager.PERMISSION_GRANTED
+        when {
+            !isUpi123Ready -> context.startActivity(
+                Intent(context, TestConfigurationActivity::class.java)
+            )
+            !PermissionManager.canDrawOverlays(context) -> showOverlayPermissionDialog = true
+            !hasSms -> {
+                pendingSmsAction = { showPayContact = true }
+                showSmsPermissionDialog = true
+            }
+            else -> showPayContact = true
         }
     }
 
@@ -775,49 +801,84 @@ fun MainScreen(
                         }
                     },
                     onPayContactClick = {
-                        maybeAskNotifications()
-                        val hasSms = ContextCompat.checkSelfPermission(
-                            context, Manifest.permission.RECEIVE_SMS
-                        ) == PackageManager.PERMISSION_GRANTED
-                        when {
-                            // UPI 123 IVR not verified yet — the button is in its
-                            // "Set up UPI 123 IVR" state; take the user to the
-                            // *99# / UPI 123 test screen instead of the pay dialog.
-                            !isUpi123Ready -> {
-                                context.startActivity(
-                                    Intent(context, TestConfigurationActivity::class.java)
-                                )
-                            }
-                            // Overlay permission is required before the payment
-                            // call can show its UI, so ask now — not after the
-                            // user has filled in the transfer details.
-                            !PermissionManager.canDrawOverlays(context) -> {
-                                showOverlayPermissionDialog = true
-                            }
-                            !hasSms -> {
-                                pendingSmsAction = { showPayContact = true }
-                                showSmsPermissionDialog = true
-                            }
-                            else -> showPayContact = true
-                        }
+                        requestPayContact()
                     },
                     isUpi123Ready = isUpi123Ready,
                     isUssdReady = isUssdReady,
                     isScanning = isScanning
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                if (recentPayees.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Spacing.medium)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.home_recent_payees),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = FlowpayTextWhite
+                        )
+                        Spacer(Modifier.height(Spacing.small))
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(Spacing.small)) {
+                            items(recentPayees) { payee ->
+                                val name = payee.recipientName
+                                    ?.takeIf(String::isNotBlank)
+                                    ?: payee.phoneNumber
+                                Surface(
+                                    modifier = Modifier
+                                        .heightIn(min = Spacing.touchTarget)
+                                        .clickable { requestPayContact(payee) },
+                                    color = Color.White,
+                                    shape = RoundedCornerShape(12.dp),
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        1.dp,
+                                        FlowpayLightGray
+                                    )
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(
+                                            horizontal = Spacing.medium,
+                                            vertical = Spacing.small
+                                        ),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Person,
+                                            contentDescription = null,
+                                            tint = FlowpayAccentBlue,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Spacer(Modifier.width(Spacing.small))
+                                        Text(
+                                            text = name,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = FlowpayTextWhite,
+                                            maxLines = 1
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(Spacing.large))
 
                 // Recent Transactions
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = FlowpaySurfaceDim),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
-                    Column(modifier = Modifier.padding(18.dp)) {
+                    Column(
+                        modifier = Modifier
+                            .padding(Spacing.medium)
+                            .border(0.dp, Color.Transparent, RoundedCornerShape(16.dp))
+                    ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -826,28 +887,27 @@ fun MainScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(
                                     modifier = Modifier
-                                        .size(36.dp)
-                                        .background(FlowpaySurfaceDim, CircleShape),
+                                        .size(Spacing.touchTarget)
+                                        .background(FlowpayMediumGray, CircleShape),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.History,
-                                        contentDescription = "History",
+                                        contentDescription = null,
                                         modifier = Modifier.size(20.dp),
-                                        tint = LocalFlowpayAccentTheme.current.headerGradientStart
+                                        tint = FlowpayAccentBlue
                                     )
                                 }
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column {
                                     Text(
-                                        text = "Recent Payments",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
+                                        text = stringResource(R.string.home_recent_payments),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = FlowpayTextWhite
                                     )
                                     Text(
-                                        text = "Your latest transactions",
-                                        fontSize = 12.sp,
+                                        text = stringResource(R.string.home_recent_payments_subtitle),
+                                        style = MaterialTheme.typography.bodyMedium,
                                         color = FlowpayTextLightGray
                                     )
                                 }
@@ -859,8 +919,7 @@ fun MainScreen(
                                 }
                             ) {
                                 Text(
-                                    text = "View All",
-                                    fontSize = 12.sp,
+                                    text = stringResource(R.string.home_view_all),
                                     color = LocalFlowpayAccentTheme.current.accent
                                 )
                             }
@@ -878,14 +937,13 @@ fun MainScreen(
                                 ) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(32.dp),
-                                        color = LocalFlowpayAccentTheme.current.headerGradientStart,
+                                        color = FlowpayAccentBlue,
                                         strokeWidth = 3.dp
                                     )
                                     Spacer(modifier = Modifier.height(20.dp))
                                     Text(
-                                        text = "Loading transactions...",
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Medium,
+                                        text = stringResource(R.string.home_loading_transactions),
+                                        style = MaterialTheme.typography.bodyMedium,
                                         color = FlowpayTextLightGray
                                     )
                                 }
@@ -899,25 +957,21 @@ fun MainScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Failed to load transactions",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = Color.White
+                                        text = stringResource(R.string.home_failed_to_load),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = FlowpayTextWhite
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
-                                        text = error ?: "Unknown error",
-                                        fontSize = 13.sp,
+                                        text = error.orEmpty(),
                                         color = FlowpayTextLightGray,
                                         textAlign = TextAlign.Center
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
                                     TextButton(onClick = { transactionViewModel.refresh() }) {
                                         Text(
-                                            text = "Retry",
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Medium,
-                                            color = LocalFlowpayAccentTheme.current.headerGradientStart
+                                            text = stringResource(R.string.home_retry),
+                                            color = FlowpayAccentBlue
                                         )
                                     }
                                 }
@@ -938,22 +992,20 @@ fun MainScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.History,
-                                            contentDescription = "No transactions",
+                                            contentDescription = null,
                                             modifier = Modifier.size(32.dp),
                                             tint = FlowpayTextLightGray
                                         )
                                     }
                                     Spacer(modifier = Modifier.height(20.dp))
                                     Text(
-                                        text = "No transactions yet",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = Color.White
+                                        text = stringResource(R.string.home_no_transactions),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = FlowpayTextWhite
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
-                                        text = "Your payment history will appear here",
-                                        fontSize = 13.sp,
+                                        text = stringResource(R.string.home_history_empty),
                                         color = FlowpayTextLightGray,
                                         textAlign = TextAlign.Center
                                     )
@@ -961,11 +1013,8 @@ fun MainScreen(
                             }
 
                             else -> {
-                                LazyColumn(
-                                    modifier = Modifier.height(280.dp),
-                                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    items(recentPayments) { payment ->
+                                Column(verticalArrangement = Arrangement.spacedBy(Spacing.small)) {
+                                    recentPayments.take(3).forEach { payment ->
                                         TransactionItem(
                                             payment = payment,
                                             onClick = {
@@ -998,6 +1047,8 @@ fun MainScreen(
             // Dialogs
             if (showPayContact) {
                 PayContactDialog(
+                    initialPhoneNumber = prefilledPayee?.second.orEmpty(),
+                    initialRecipientName = prefilledPayee?.first,
                     onDismiss = { showPayContact = false },
                     onConfirm = { phone, amt ->
                         if (permissionManager?.checkSMSPermissions() != true) {
@@ -1016,9 +1067,9 @@ fun MainScreen(
 
             if (showOverlayPermissionDialog) {
                 PermissionExplanationDialog(
-                    title = "Overlay Permission",
-                    message = "Flowpay needs overlay permission to show a payment UI anchor during the call. This keeps your transaction details visible while the call is in progress.",
-                    confirmButtonText = "Grant",
+                    title = stringResource(R.string.permission_overlay_title),
+                    message = stringResource(R.string.permission_overlay_reason),
+                    confirmButtonText = stringResource(R.string.permission_grant),
                     onConfirm = {
                         showOverlayPermissionDialog = false
                         onRequestOverlayPermission()
@@ -1029,9 +1080,9 @@ fun MainScreen(
 
             if (showSmsPermissionDialog) {
                 PermissionExplanationDialog(
-                    title = "SMS Permission",
-                    message = "Flowpay reads incoming bank SMS only while a payment is in progress, to detect the confirmation. It never reads your inbox and nothing leaves the device.",
-                    confirmButtonText = "Grant",
+                    title = stringResource(R.string.permission_sms_title),
+                    message = stringResource(R.string.permission_sms_reason),
+                    confirmButtonText = stringResource(R.string.permission_grant),
                     onConfirm = {
                         showSmsPermissionDialog = false
                         // Only RECEIVE_SMS is declared in the manifest and
@@ -1054,38 +1105,37 @@ fun TransactionItem(payment: PaymentDetails, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(90.dp)
+            .heightIn(min = 68.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = FlowpaySurfaceDim),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 18.dp, vertical = 14.dp),
+                .padding(horizontal = Spacing.medium, vertical = Spacing.small),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 12.dp),
+                    .padding(end = Spacing.small),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = payment.recipientName ?: payment.phoneNumber,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
+                    text = payment.recipientName?.takeIf(String::isNotBlank) ?: payment.phoneNumber,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = FlowpayTextWhite,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = formatDate(payment.timestamp),
-                    fontSize = 14.sp,
-                    color = FlowpayTextPale,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = FlowpayTextLightGray,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Medium
@@ -1099,52 +1149,37 @@ fun TransactionItem(payment: PaymentDetails, onClick: () -> Unit) {
 
 @Composable
 private fun TransactionItemAmount(amount: Double, status: PaymentStatus) {
-    // FAILED and CANCELLED read as "this payment did not go through" — a
-    // cross, not the same outgoing arrow a successful payment gets. Every
-    // other outcome (COMPLETED, PENDING, NEEDS_REVIEW, UNVERIFIED) keeps the
-    // arrow: this row has no separate status chip (unlike transaction
-    // history), so the icon is the only signal here.
-    val failed = status == PaymentStatus.FAILED || status == PaymentStatus.CANCELLED
-    val tint = if (failed) FlowpayStatusError else LocalFlowpayAccentTheme.current.headerGradientStart
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End,
-        modifier = Modifier.padding(start = 8.dp)
+    Column(
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.spacedBy(Spacing.small),
+        modifier = Modifier.padding(start = Spacing.small)
     ) {
         Text(
             text = stringResource(R.string.amount_rupees, CurrencyFormat.inr(amount)),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            color = LocalFlowpayAccentTheme.current.headerGradientStart,
+            style = MaterialTheme.typography.titleSmall,
+            color = FlowpayTextWhite,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Icon(
-            imageVector = if (failed) Icons.Default.Close else Icons.Default.ArrowOutward,
-            contentDescription = stringResource(
-                if (failed) R.string.cd_payment_failed else R.string.cd_payment_outgoing
-            ),
-            modifier = Modifier.size(18.dp),
-            tint = tint
-        )
+        StatusIndicator(status = status.name)
     }
 }
 
 @Composable
 fun PayContactDialog(
+    initialPhoneNumber: String = "",
+    initialRecipientName: String? = null,
     onDismiss: () -> Unit,
     onConfirm: (String, String) -> Unit
 ) {
     val context = LocalContext.current
     val hostActivity = remember(context) { context.findComponentActivity() }
-    var phoneNumber by remember { mutableStateOf("") }
+    var phoneNumber by remember(initialPhoneNumber) { mutableStateOf(initialPhoneNumber) }
     var amount by remember { mutableStateOf("") }
     // UPI 123Pay's IVR will not accept 5000 or more (AppConstants
     // .UPI123PAY_MAX_AMOUNT = 4999), so the cap is enforced before dialling.
     val isOverCap = (amount.toLongOrNull() ?: 0L) > AppConstants.UPI123PAY_MAX_AMOUNT.toLong()
-    var selectedContactName by remember { mutableStateOf<String?>(null) }
+    var selectedContactName by remember(initialRecipientName) { mutableStateOf(initialRecipientName) }
     var showContactPicker by remember { mutableStateOf(false) }
     var showContactPermissionDialog by remember { mutableStateOf(false) }
     val permissionManager = remember(hostActivity) {
@@ -1161,10 +1196,9 @@ fun PayContactDialog(
         containerColor = FlowpayDarkGray,
         title = {
             Text(
-                text = "Pay Contact",
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
+                text = stringResource(R.string.home_pay_by_number),
+                color = FlowpayTextWhite,
+                style = MaterialTheme.typography.titleLarge
             )
         },
         text = {
@@ -1191,7 +1225,7 @@ fun PayContactDialog(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Sending to: $name",
+                                text = stringResource(R.string.pay_contact_sending_to, name),
                                 color = LocalFlowpayAccentTheme.current.accent,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Medium
@@ -1223,8 +1257,8 @@ fun PayContactDialog(
                         singleLine = true,
                         modifier = Modifier.weight(1f),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
+                            focusedTextColor = FlowpayTextWhite,
+                            unfocusedTextColor = FlowpayTextWhite,
                             focusedBorderColor = FlowpayOutlineGray,
                             unfocusedBorderColor = FlowpayLightGray,
                             focusedContainerColor = Color.Transparent,
@@ -1238,7 +1272,7 @@ fun PayContactDialog(
                             if (pm == null) {
                                 Toast.makeText(
                                     context.applicationContext,
-                                    "Unable to open contacts from this screen.",
+                                context.getString(R.string.contacts_picker_error),
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 return@IconButton
@@ -1259,7 +1293,7 @@ fun PayContactDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Default.PermContactCalendar,
-                            contentDescription = "Select Contact",
+                            contentDescription = context.getString(R.string.home_select_contact),
                             tint = LocalFlowpayAccentTheme.current.accent
                         )
                     }
@@ -1283,8 +1317,8 @@ fun PayContactDialog(
                     isError = isOverCap,
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
+                        focusedTextColor = FlowpayTextWhite,
+                        unfocusedTextColor = FlowpayTextWhite,
                         focusedBorderColor = if (isOverCap) FlowpayStatusError else FlowpayOutlineGray,
                         unfocusedBorderColor = if (isOverCap) FlowpayStatusError else FlowpayLightGray,
                         focusedContainerColor = Color.Transparent,
@@ -1342,9 +1376,9 @@ fun PayContactDialog(
 
     if (showContactPermissionDialog) {
         PermissionExplanationDialog(
-            title = "Contacts Permission",
-            message = "Flowpay needs access to your contacts so you can pick a recipient by name instead of typing their number.",
-            confirmButtonText = "Grant",
+            title = stringResource(R.string.permission_contacts_title),
+            message = stringResource(R.string.permission_contacts_reason),
+            confirmButtonText = stringResource(R.string.permission_grant),
             onConfirm = {
                 showContactPermissionDialog = false
                 contactPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
@@ -1370,7 +1404,7 @@ fun PermissionExplanationDialog(
                 text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White
+                color = FlowpayTextWhite
             )
         },
         text = {

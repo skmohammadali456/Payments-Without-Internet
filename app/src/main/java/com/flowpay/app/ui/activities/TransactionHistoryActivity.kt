@@ -22,14 +22,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,14 +41,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flowpay.app.R
 import com.flowpay.app.data.Transaction
 import com.flowpay.app.ui.components.TransactionDetailDialog
+import com.flowpay.app.ui.components.StatusIndicator
 import com.flowpay.app.ui.theme.BlueAccentTheme
-import com.flowpay.app.ui.theme.FlowpayDarkGray
+import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
 import com.flowpay.app.ui.theme.FlowpayStatusError
 import com.flowpay.app.ui.theme.FlowpayTextLightGray
+import com.flowpay.app.ui.theme.FlowpayTextWhite
+import com.flowpay.app.ui.theme.FlowpaySurfaceDim
+import com.flowpay.app.ui.theme.Spacing
 import com.flowpay.app.ui.theme.FlowpayTheme
 import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
-import com.flowpay.app.ui.theme.statusColor
 import com.flowpay.app.utils.CurrencyFormat
 import com.flowpay.app.viewmodel.TransactionViewModel
 import java.text.SimpleDateFormat
@@ -68,12 +72,24 @@ fun formatTime(timestamp: Long): String {
 
 @androidx.annotation.StringRes
 fun statusLabelRes(status: String): Int = when (status.uppercase()) {
-    "SUCCESS", "SUCCESSFUL", "COMPLETED" -> R.string.status_label_success
+    "SUCCESS" -> R.string.status_label_success
     "UNVERIFIED" -> R.string.status_label_unverified
     "NEEDS_REVIEW" -> R.string.status_label_needs_review
     "CANCELLED" -> R.string.status_label_cancelled
     "FAILED", "DECLINED" -> R.string.status_label_failed
-    else -> R.string.status_label_pending
+    "PENDING" -> R.string.status_label_pending
+    else -> R.string.status_label_unknown
+}
+
+private fun matchesStatusFilter(status: String, filter: String?): Boolean = when (filter) {
+    null -> true
+    "SUCCESS" -> status.equals("SUCCESS", ignoreCase = true)
+    "NEEDS_REVIEW" -> status.equals("NEEDS_REVIEW", ignoreCase = true)
+    "UNVERIFIED" -> status.equals("UNVERIFIED", ignoreCase = true)
+    "PENDING" -> status.equals("PENDING", ignoreCase = true)
+    "FAILED" -> status.equals("FAILED", ignoreCase = true) || status.equals("DECLINED", ignoreCase = true)
+    "CANCELLED" -> status.equals("CANCELLED", ignoreCase = true)
+    else -> false
 }
 
 private fun isSameDay(c1: Calendar, c2: Calendar): Boolean =
@@ -106,24 +122,32 @@ fun TransactionHistoryScreen(
     // State
     var searchQuery by remember { mutableStateOf("") }
     var showSearchBar by remember { mutableStateOf(false) }
+    var selectedStatus by remember { mutableStateOf<String?>(null) }
+    var showFilterSheet by remember { mutableStateOf(false) }
     var selectedTransaction by remember { mutableStateOf<Transaction?>(null) }
+    val statusFilters: List<Pair<String?, Int>> = listOf(
+        null to R.string.history_filter_all,
+        "SUCCESS" to R.string.history_filter_success,
+        "NEEDS_REVIEW" to R.string.history_filter_needs_review,
+        "UNVERIFIED" to R.string.history_filter_unverified,
+        "PENDING" to R.string.history_filter_pending,
+        "FAILED" to R.string.history_filter_failed,
+        "CANCELLED" to R.string.history_filter_cancelled
+    )
 
     // Collect data
     val allTransactions by transactionViewModel.loadAllTransactions().collectAsState(initial = emptyList())
     val isLoading by transactionViewModel.isLoading.collectAsState()
     val error by transactionViewModel.error.collectAsState()
 
-    // Filter by search only
-    val filteredTransactions = remember(allTransactions, searchQuery) {
-        if (searchQuery.isEmpty()) {
-            allTransactions
-        } else {
-            allTransactions.filter { transaction ->
+    val filteredTransactions = remember(allTransactions, searchQuery, selectedStatus) {
+        allTransactions.filter { transaction ->
+            val matchesSearch = searchQuery.isBlank() ||
                 transaction.recipientName?.contains(searchQuery, ignoreCase = true) == true ||
-                    transaction.phoneNumber?.contains(searchQuery, ignoreCase = true) == true ||
-                    transaction.bankName.contains(searchQuery, ignoreCase = true) ||
-                    transaction.amount.contains(searchQuery, ignoreCase = true)
-            }
+                transaction.phoneNumber?.contains(searchQuery, ignoreCase = true) == true ||
+                transaction.bankName.contains(searchQuery, ignoreCase = true) ||
+                transaction.amount.contains(searchQuery, ignoreCase = true)
+            matchesSearch && matchesStatusFilter(transaction.status, selectedStatus)
         }
     }
 
@@ -157,19 +181,19 @@ fun TransactionHistoryScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color.Black
+        color = FlowpaySurfaceDim
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(FlowpaySurfaceDim)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .widthIn(max = 420.dp)
                     .align(Alignment.Center)
-                    .background(Color.Black)
+                    .background(FlowpaySurfaceDim)
                     .statusBarsPadding()
                     .navigationBarsPadding()
             ) {
@@ -181,14 +205,7 @@ fun TransactionHistoryScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                         .clip(RoundedCornerShape(20.dp))
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    accent.headerGradientStart,
-                                    accent.headerGradientEnd
-                                )
-                            )
-                        )
+                        .background(Color.White)
                         .padding(horizontal = 16.dp, vertical = 16.dp)
                 ) {
                     Row(
@@ -198,9 +215,9 @@ fun TransactionHistoryScreen(
                         // Back button
                         Box(
                             modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.22f))
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(FlowpaySurfaceDim)
                                 .clickable(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
@@ -210,7 +227,7 @@ fun TransactionHistoryScreen(
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
                                 contentDescription = stringResource(R.string.history_back),
-                                tint = Color.White,
+                                tint = FlowpayTextWhite,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -219,9 +236,9 @@ fun TransactionHistoryScreen(
 
                         Text(
                             text = stringResource(R.string.history_title),
-                            fontSize = 20.sp,
+                            fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White,
+                            color = FlowpayTextWhite,
                             letterSpacing = 0.3.sp,
                             modifier = Modifier.weight(1f)
                         )
@@ -229,15 +246,9 @@ fun TransactionHistoryScreen(
                         // Search button
                         Box(
                             modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    if (showSearchBar) {
-                                        Color.White.copy(alpha = 0.35f)
-                                    } else {
-                                        Color.White.copy(alpha = 0.22f)
-                                    }
-                                )
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(FlowpaySurfaceDim)
                                 .clickable(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
@@ -247,8 +258,23 @@ fun TransactionHistoryScreen(
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = stringResource(R.string.history_search),
-                                tint = Color.White,
+                                tint = accent.primary,
                                 modifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        Spacer(Modifier.width(Spacing.small))
+                        IconButton(
+                            onClick = { showFilterSheet = true },
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(FlowpaySurfaceDim)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FilterList,
+                                contentDescription = stringResource(R.string.history_filter_button),
+                                tint = accent.primary
                             )
                         }
                     }
@@ -289,7 +315,7 @@ fun TransactionHistoryScreen(
                                 IconButton(onClick = { searchQuery = "" }) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
-                                        contentDescription = "Clear",
+                                        contentDescription = stringResource(R.string.history_clear_search),
                                         tint = FlowpayTextLightGray,
                                         modifier = Modifier.size(18.dp)
                                     )
@@ -297,12 +323,12 @@ fun TransactionHistoryScreen(
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
+                            focusedTextColor = FlowpayTextWhite,
+                            unfocusedTextColor = FlowpayTextWhite,
                             focusedBorderColor = accent.primary,
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedContainerColor = FlowpayDarkGray,
-                            unfocusedContainerColor = FlowpayDarkGray
+                            unfocusedBorderColor = FlowpayLightGray,
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
                         ),
                         shape = RoundedCornerShape(16.dp),
                         singleLine = true
@@ -349,15 +375,15 @@ fun TransactionHistoryScreen(
                                 }
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "Something went wrong",
+                                    text = stringResource(R.string.history_error_title),
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color.White
+                                    color = FlowpayTextWhite
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 TextButton(onClick = { transactionViewModel.refresh() }) {
                                     Text(
-                                        "Retry",
+                                        stringResource(R.string.home_retry),
                                         color = accent.primary,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Medium
@@ -390,21 +416,21 @@ fun TransactionHistoryScreen(
                                 }
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = if (searchQuery.isNotEmpty()) {
-                                        "No matching transactions"
+                                    text = if (searchQuery.isNotEmpty() || selectedStatus != null) {
+                                        stringResource(R.string.history_empty_search)
                                     } else {
-                                        "No transactions yet"
+                                        stringResource(R.string.history_empty_title)
                                     },
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color.White
+                                    color = FlowpayTextWhite
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = if (searchQuery.isNotEmpty()) {
-                                        "Try a different search"
+                                    text = if (searchQuery.isNotEmpty() || selectedStatus != null) {
+                                        stringResource(R.string.history_empty_search_body)
                                     } else {
-                                        "Transactions will appear here"
+                                        stringResource(R.string.history_empty_body)
                                     },
                                     fontSize = 13.sp,
                                     color = FlowpayTextLightGray
@@ -443,7 +469,7 @@ fun TransactionHistoryScreen(
                                         HorizontalDivider(
                                             modifier = Modifier.padding(start = 52.dp),
                                             thickness = 0.5.dp,
-                                            color = FlowpayDarkGray
+                                            color = FlowpayLightGray
                                         )
                                     }
                                 }
@@ -466,6 +492,55 @@ fun TransactionHistoryScreen(
             }
         )
     }
+
+    if (showFilterSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showFilterSheet = false },
+            containerColor = Color.White,
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.medium)
+                    .padding(bottom = Spacing.extraLarge)
+            ) {
+                Text(
+                    text = stringResource(R.string.history_filters_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = FlowpayTextWhite
+                )
+                Spacer(Modifier.height(Spacing.small))
+                statusFilters.forEach { (filter, labelRes) ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = Spacing.touchTarget)
+                            .clickable {
+                                selectedStatus = filter
+                                showFilterSheet = false
+                            }
+                            .padding(horizontal = Spacing.small),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(labelRes),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = FlowpayTextWhite,
+                            modifier = Modifier.weight(1f)
+                        )
+                        RadioButton(
+                            selected = selectedStatus == filter,
+                            onClick = {
+                                selectedStatus = filter
+                                showFilterSheet = false
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 // ═══ TRANSACTION ROW — flat, minimal, GPay-style ═══
@@ -478,7 +553,7 @@ private fun TransactionHistoryItem(
     val accent = LocalFlowpayAccentTheme.current
     val displayName = transaction.recipientName?.takeIf { it.isNotEmpty() }
         ?: transaction.phoneNumber?.takeIf { it.isNotEmpty() }
-        ?: "Unknown"
+        ?: stringResource(R.string.home_payee_unknown)
     val initial = displayName.first().uppercaseChar()
 
     Row(
@@ -501,7 +576,7 @@ private fun TransactionHistoryItem(
                 text = displayName,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color.White,
+                color = FlowpayTextWhite,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -523,7 +598,7 @@ private fun TransactionHistoryItem(
                 text = stringResource(R.string.amount_rupees, CurrencyFormat.inr(transaction.amount)),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White,
+                color = FlowpayTextWhite,
                 maxLines = 1
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -538,30 +613,19 @@ private fun TransactionAvatar(initial: Char) {
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
-            .background(FlowpayDarkGray),
+            .background(FlowpayMediumGray),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = initial.toString(),
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.White
+            color = FlowpayTextWhite
         )
     }
 }
 
 @Composable
 private fun StatusPill(status: String) {
-    val statusColor = statusColor(status)
-    Text(
-        text = stringResource(statusLabelRes(status)),
-        fontSize = 11.sp,
-        fontWeight = FontWeight.Medium,
-        color = statusColor,
-        maxLines = 1,
-        modifier = Modifier
-            .clip(RoundedCornerShape(6.dp))
-            .background(statusColor.copy(alpha = 0.15f))
-            .padding(horizontal = 8.dp, vertical = 2.dp)
-    )
+    StatusIndicator(status = status)
 }

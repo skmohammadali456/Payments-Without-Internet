@@ -43,12 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.flowpay.app.helpers.SetupHelper
 import com.flowpay.app.ui.theme.BlueAccentTheme
+import com.flowpay.app.ui.theme.FlowpayAccentBlue
 import com.flowpay.app.ui.theme.FlowpayDarkGray
 import com.flowpay.app.ui.theme.FlowpayDisabledGray
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
 import com.flowpay.app.ui.theme.FlowpaySurfaceDim
 import com.flowpay.app.ui.theme.FlowpayTextLightGray
+import com.flowpay.app.ui.theme.FlowpayTextWhite
 import com.flowpay.app.ui.theme.FlowpayTheme
 import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
 
@@ -104,7 +106,7 @@ fun SetupScreen(setupHelper: SetupHelper) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(FlowpaySurfaceDim)
     ) {
         Column(
             modifier = Modifier
@@ -198,18 +200,13 @@ fun HeaderCard() {
                 spotColor = Color.Black.copy(alpha = 0.15f)
             ),
         shape = headerShape,
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    brush = Brush.verticalGradient(
-                        listOf(accent.headerGradientStart, accent.headerGradientEnd)
-                    ),
-                    shape = headerShape
-                )
+                .background(Color.White, shape = headerShape)
         ) {
             Column(
                 modifier = Modifier
@@ -222,7 +219,7 @@ fun HeaderCard() {
                         modifier = Modifier
                             .size(44.dp)
                             .background(
-                                color = Color.White.copy(alpha = 0.22f),
+                                color = FlowpayMediumGray,
                                 shape = CircleShape
                             ),
                         contentAlignment = Alignment.Center
@@ -230,7 +227,7 @@ fun HeaderCard() {
                         Icon(
                             imageVector = Icons.Default.AccountBalanceWallet,
                             contentDescription = null,
-                            tint = Color.White,
+                            tint = FlowpayAccentBlue,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -241,7 +238,7 @@ fun HeaderCard() {
                         Text(
                             text = stringResource(R.string.setup_flowpay),
                             style = TextStyle(
-                                color = Color.White,
+                                color = FlowpayTextWhite,
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 0.3.sp,
@@ -255,7 +252,7 @@ fun HeaderCard() {
                         Text(
                             text = stringResource(R.string.setup_step_1_of_2),
                             fontSize = 14.sp,
-                            color = Color.White.copy(alpha = 0.7f),
+                            color = FlowpayTextLightGray,
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -266,7 +263,7 @@ fun HeaderCard() {
                 Text(
                     text = stringResource(R.string.configure_upi_payments),
                     fontSize = 15.sp,
-                    color = Color.White.copy(alpha = 0.85f),
+                    color = FlowpayTextLightGray,
                     fontWeight = FontWeight.Normal,
                     lineHeight = 22.sp
                 )
@@ -313,7 +310,7 @@ private fun SetupSectionHeader(
                 text = title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = FlowpayTextWhite
             )
             Text(
                 text = subtitle,

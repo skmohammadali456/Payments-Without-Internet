@@ -37,6 +37,11 @@
          Log.e(TAG, "…", e) call, which carries the throwable. -->
     <string name="error_permissions_denied">Some permissions were denied. WavePay may not work correctly without them.</string>
     <string name="error_call_permission_denied">WavePay needs permission to place the call.</string>
+    <string name="error_sms_permission">SMS permission is needed to detect a payment confirmation. You can continue without it, but the outcome may be unknown.</string>
+    <string name="overlay_permission_granted">Overlay permission granted. You can now continue.</string>
+    <string name="overlay_permission_required">Overlay permission is required to show payment guidance during the call. Enable it in Settings.</string>
+    <string name="contacts_picker_error">Could not open contacts from this screen.</string>
+    <string name="pay_contact_sending_to">Sending to: %1$s</string>
     <string name="error_call_failed">Could not start the payment call. Please try again.</string>
     <string name="error_audio_permission">WavePay needs permission to adjust call audio.</string>
     <string name="error_audio_lower_failed">Could not lower the call volume.</string>
@@ -132,8 +137,8 @@
     <!-- Transaction status explainers -->
     <string name="status_explainer_pending">Waiting for your bank\'s confirmation SMS.</string>
     <string name="status_explainer_unverified">Do not pay again until you have checked your bank statement or SMS inbox.</string>
-    <string name="status_explainer_cancelled">The payment flow ended before completing. No money should have moved.</string>
-    <string name="status_explainer_failed">Your bank reported this payment as failed. Any debited amount is normally auto-reversed.</string>
+    <string name="status_explainer_cancelled">The payment call ended before WavePay received confirmation. Check your bank statement or SMS inbox if you had approved the payment.</string>
+    <string name="status_explainer_failed">Your bank reported this payment as failed. Check your bank statement for any debit.</string>
     <string name="status_explainer_needs_review">A bank SMS arrived during this payment but its amount didn\'t match. Check your bank statement before retrying.</string>
     <string name="status_explainer_unknown">The payment outcome could not be confirmed. Check your bank statement or SMS inbox before paying again.</string>
 
@@ -226,6 +231,14 @@
     <string name="settings_not_granted">Not granted</string>
     <string name="settings_grant">Grant</string>
     <string name="settings_configuration">Configuration</string>
+    <string name="settings_section_data">Data</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_reset_all">Reset settings</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_android">Android</string>
+    <string name="settings_select_bank">Select bank</string>
+    <string name="settings_select_primary_sim">Select primary SIM</string>
+    <string name="settings_selected">Selected</string>
     <string name="settings_clear_data_warning">This permanently deletes your transaction history on this device and resets settings. This cannot be undone.</string>
 
     <!-- Contact picker -->
@@ -246,6 +259,7 @@
     <string name="home_connected_bank">Bank</string>
     <string name="home_works_offline">Works without internet</string>
     <string name="home_pay_by_number">Pay by number</string>
+    <string name="home_setup_upi123">Set up UPI 123</string>
     <string name="home_recent_payees">Recent payees</string>
     <string name="home_recent_payments">Recent payments</string>
     <string name="home_recent_payments_subtitle">Your latest transactions</string>
@@ -319,8 +333,12 @@
     <string name="history_filter_success">Success</string>
     <string name="history_filter_needs_review">Needs review</string>
     <string name="history_filter_unverified">Unverified</string>
+    <string name="history_filter_pending">Pending</string>
     <string name="history_filter_failed">Failed</string>
     <string name="history_filter_cancelled">Cancelled</string>
+    <string name="history_filter_button">Filter transactions</string>
+    <string name="history_filters_title">Filter by status</string>
+    <string name="history_clear_search">Clear search</string>
     <string name="history_error_title">Could not load transactions</string>
     <string name="history_empty_title">No transactions yet</string>
     <string name="history_empty_search">No matching transactions</string>

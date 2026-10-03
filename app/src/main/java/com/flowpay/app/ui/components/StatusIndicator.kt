@@ -36,7 +36,7 @@ fun StatusIndicator(
     modifier: Modifier = Modifier
 ) {
     val (label, color, icon) = when (status.uppercase()) {
-        "SUCCESS", "SUCCESSFUL", "COMPLETED" ->
+        "SUCCESS" ->
             Triple(R.string.status_label_success, FlowpayStatusSuccess, Icons.Default.CheckCircle)
         "FAILED", "DECLINED" ->
             Triple(R.string.status_label_failed, FlowpayStatusError, Icons.Default.ErrorOutline)
