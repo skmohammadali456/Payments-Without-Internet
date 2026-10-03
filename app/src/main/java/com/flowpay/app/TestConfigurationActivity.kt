@@ -236,14 +236,14 @@ fun TestConfigurationScreen(testHelper: TestConfigurationHelper) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(FlowpaySurfaceDim)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .widthIn(max = 420.dp)
                 .align(Alignment.Center)
-                .background(Color.Black)
+                .background(FlowpaySurfaceDim)
                 .statusBarsPadding()
                 .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())

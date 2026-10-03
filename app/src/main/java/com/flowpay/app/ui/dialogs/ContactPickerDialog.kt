@@ -21,7 +21,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +34,7 @@ import com.flowpay.app.ui.theme.FlowpayMediumGray
 import com.flowpay.app.ui.theme.FlowpayOutlineGray
 import com.flowpay.app.ui.theme.FlowpayTextGray
 import com.flowpay.app.ui.theme.FlowpayTextLightGray
+import com.flowpay.app.ui.theme.FlowpayTextWhite
 import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -67,7 +67,10 @@ fun ContactPickerDialog(
     // Load contacts when dialog opens
     LaunchedEffect(Unit) {
         val loadedContacts = try {
-            loadContacts(context.contentResolver)
+            loadContacts(
+                context.contentResolver,
+                context.getString(R.string.contact_picker_unknown)
+            )
         } catch (e: SecurityException) {
             Log.e("ContactPicker", "Contacts permission denied or restricted", e)
             emptyList()
@@ -103,15 +106,15 @@ fun ContactPickerDialog(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Select Contact",
-                    color = Color.White,
+                    stringResource(R.string.contact_picker_title),
+                    color = FlowpayTextWhite,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 IconButton(onClick = onDismiss) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.detail_close),
                         tint = FlowpayTextLightGray
                     )
                 }
@@ -134,13 +137,13 @@ fun ContactPickerDialog(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
+                            contentDescription = stringResource(R.string.contact_search_description),
                             tint = FlowpayTextLightGray
                         )
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
+                        focusedTextColor = FlowpayTextWhite,
+                        unfocusedTextColor = FlowpayTextWhite,
                         focusedBorderColor = FlowpayOutlineGray,
                         unfocusedBorderColor = FlowpayLightGray,
                         cursorColor = LocalFlowpayAccentTheme.current.accent,
@@ -169,9 +172,12 @@ fun ContactPickerDialog(
                     ) {
                         Text(
                             text = if (searchQuery.isEmpty()) {
-                                "No contacts found"
+                                stringResource(R.string.contact_picker_empty)
                             } else {
-                                "No matches for \"$searchQuery\""
+                                stringResource(
+                                    R.string.contact_picker_no_matches,
+                                    "\"$searchQuery\""
+                                )
                             },
                             color = FlowpayTextGray,
                             fontSize = 16.sp
@@ -250,7 +256,7 @@ fun ContactItem(
             ) {
                 Text(
                     text = contact.name,
-                    color = Color.White,
+                    color = FlowpayTextWhite,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
@@ -273,7 +279,10 @@ fun ContactItem(
  * Load contacts from the device's contact database
  * Returns a list of contacts with 10-digit phone numbers
  */
-suspend fun loadContacts(contentResolver: ContentResolver): List<Contact> = withContext(Dispatchers.IO) {
+suspend fun loadContacts(
+    contentResolver: ContentResolver,
+    unknownName: String
+): List<Contact> = withContext(Dispatchers.IO) {
     val contactsList = mutableListOf<Contact>()
     val projection = arrayOf(
         ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
@@ -299,7 +308,7 @@ suspend fun loadContacts(contentResolver: ContentResolver): List<Contact> = with
 
         while (it.moveToNext()) {
             val id = it.getString(idColumn)
-            val name = it.getString(nameColumn) ?: "Unknown"
+            val name = it.getString(nameColumn) ?: unknownName
             val number = it.getString(numberColumn) ?: ""
 
             // Clean the phone number (remove spaces, dashes, brackets, etc.)

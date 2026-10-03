@@ -15,7 +15,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.res.stringResource
@@ -27,6 +26,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.flowpay.app.R
 import com.flowpay.app.ui.theme.FlowpayDarkGray
+import com.flowpay.app.ui.theme.FlowpayAccentBlue
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayOutlineGray
 import com.flowpay.app.ui.theme.FlowpayTextGray
@@ -129,7 +129,7 @@ private fun UssdProgressDialogContent(
                     },
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = FlowpayTextWhite,
                     textAlign = TextAlign.Center
                 )
 
@@ -162,14 +162,14 @@ private fun UssdProgressDialogContent(
                                 .height(50.dp),
                             shape = RoundedCornerShape(15.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = FlowpayLightGray
+                                containerColor = FlowpayMediumGray
                             )
                         ) {
                             Text(
                                 text = stringResource(R.string.ussd_dlg_not_yet),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color.White,
+                                color = FlowpayTextWhite,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -296,7 +296,7 @@ val PhoneIcon: ImageVector
         ).apply {
             path(
                 fill = null,
-                stroke = androidx.compose.ui.graphics.SolidColor(Color.White),
+                stroke = androidx.compose.ui.graphics.SolidColor(FlowpayAccentBlue),
                 strokeLineWidth = 2f,
                 strokeLineCap = androidx.compose.ui.graphics.StrokeCap.Round,
                 strokeLineJoin = androidx.compose.ui.graphics.StrokeJoin.Round

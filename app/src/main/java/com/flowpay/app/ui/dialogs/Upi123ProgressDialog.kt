@@ -121,7 +121,7 @@ private fun Upi123ProgressDialogContent(
                     },
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = FlowpayTextWhite,
                     textAlign = TextAlign.Center
                 )
 
@@ -161,7 +161,7 @@ private fun Upi123ProgressDialogContent(
                                 text = stringResource(R.string.upi123_dlg_not_yet),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color.White,
+                                color = FlowpayTextWhite,
                                 textAlign = TextAlign.Center
                             )
                         }

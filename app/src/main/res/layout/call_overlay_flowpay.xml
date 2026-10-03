@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             tools:text="Processing Payment"
             android:textSize="24sp"
-            android:textColor="@color/surface_card_dark"
+            android:textColor="@color/overlay_text_primary"
             android:textStyle="bold"
             android:gravity="center"
             android:maxLines="2"
@@ -162,7 +162,7 @@
                     android:layout_height="wrap_content"
                     tools:text="₹0"
                     android:textSize="24sp"
-                    android:textColor="@color/surface_card_dark"
+                    android:textColor="@color/overlay_text_primary"
                     android:textStyle="bold" />
                 
                 <TextView
@@ -195,7 +195,7 @@
                     android:layout_height="wrap_content"
                     tools:text="••••••0000"
                     android:textSize="20sp"
-                    android:textColor="@color/surface_card_dark"
+                    android:textColor="@color/overlay_text_primary"
                     android:textStyle="bold" />
                 
                 <TextView

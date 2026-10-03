@@ -377,10 +377,10 @@ fun BankSelectionSection(
                     unfocusedBorderColor = FlowpayLightGray,
                     focusedContainerColor = FlowpayMediumGray,
                     unfocusedContainerColor = FlowpayDarkGray,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedTrailingIconColor = Color.White,
-                    unfocusedTrailingIconColor = Color.White
+                    focusedTextColor = FlowpayTextWhite,
+                    unfocusedTextColor = FlowpayTextWhite,
+                    focusedTrailingIconColor = FlowpayTextLightGray,
+                    unfocusedTrailingIconColor = FlowpayTextLightGray
                 ),
                 shape = RoundedCornerShape(12.dp),
                 textStyle = TextStyle(fontSize = 15.sp),
@@ -396,7 +396,7 @@ fun BankSelectionSection(
                         text = {
                             Text(
                                 label,
-                                color = Color.White,
+                                color = FlowpayTextWhite,
                                 fontSize = 15.sp
                             )
                         },
@@ -465,10 +465,10 @@ fun SimCardSelectionSection(
                     unfocusedBorderColor = FlowpayLightGray,
                     focusedContainerColor = FlowpayMediumGray,
                     unfocusedContainerColor = FlowpayDarkGray,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedTrailingIconColor = Color.White,
-                    unfocusedTrailingIconColor = Color.White
+                    focusedTextColor = FlowpayTextWhite,
+                    unfocusedTextColor = FlowpayTextWhite,
+                    focusedTrailingIconColor = FlowpayTextLightGray,
+                    unfocusedTrailingIconColor = FlowpayTextLightGray
                 ),
                 shape = RoundedCornerShape(12.dp),
                 textStyle = TextStyle(fontSize = 15.sp),
@@ -484,7 +484,7 @@ fun SimCardSelectionSection(
                         text = {
                             Text(
                                 label,
-                                color = Color.White,
+                                color = FlowpayTextWhite,
                                 fontSize = 15.sp
                             )
                         },
@@ -539,7 +539,7 @@ fun SimCardSelectionSection(
                 text = stringResource(R.string.enable_dual_sim),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color.White
+                color = FlowpayTextWhite
             )
         }
 
@@ -579,10 +579,10 @@ fun SimCardSelectionSection(
                         unfocusedBorderColor = FlowpayLightGray,
                         focusedContainerColor = FlowpayMediumGray,
                         unfocusedContainerColor = FlowpayDarkGray,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedTrailingIconColor = Color.White,
-                        unfocusedTrailingIconColor = Color.White
+                        focusedTextColor = FlowpayTextWhite,
+                        unfocusedTextColor = FlowpayTextWhite,
+                        focusedTrailingIconColor = FlowpayTextLightGray,
+                        unfocusedTrailingIconColor = FlowpayTextLightGray
                     ),
                     shape = RoundedCornerShape(12.dp),
                     textStyle = TextStyle(fontSize = 15.sp),
@@ -598,7 +598,7 @@ fun SimCardSelectionSection(
                             text = {
                                 Text(
                                     label,
-                                    color = Color.White,
+                                    color = FlowpayTextWhite,
                                     fontSize = 15.sp
                                 )
                             },
@@ -691,7 +691,7 @@ fun DisclaimerSection(
                             }
                         ),
                         fontSize = 14.sp,
-                        color = Color.White.copy(alpha = 0.85f),
+                        color = FlowpayTextLightGray,
                         lineHeight = 20.sp
                     )
                     Spacer(modifier = Modifier.height(6.dp))

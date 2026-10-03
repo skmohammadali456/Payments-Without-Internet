@@ -18,7 +18,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -28,17 +27,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.flowpay.app.R
 import com.flowpay.app.data.Transaction
 import com.flowpay.app.ui.theme.FlowpayDarkGray
-import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
 import com.flowpay.app.ui.theme.FlowpayStatusError
 import com.flowpay.app.ui.theme.FlowpaySurfaceDim
 import com.flowpay.app.ui.theme.FlowpayTextLightGray
 import com.flowpay.app.ui.theme.FlowpayTextPale
-import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
 import com.flowpay.app.ui.theme.statusColor
 import com.flowpay.app.utils.CurrencyFormat
 import java.text.SimpleDateFormat
@@ -52,32 +48,24 @@ fun TransactionDetailDialog(
     onDelete: (() -> Unit)? = null
 ) {
     val clipboardManager = LocalClipboardManager.current
-    val accent = LocalFlowpayAccentTheme.current
     val statusColor = statusColor(transaction.status)
     var showDeleteConfirm by remember { mutableStateOf(false) }
 
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = FlowpaySurfaceDim,
-            shape = RoundedCornerShape(24.dp)
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = FlowpaySurfaceDim,
+        contentColor = FlowpayTextWhite,
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(24.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Drag handle
-                Box(
-                    modifier = Modifier
-                        .width(40.dp)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(FlowpayLightGray)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Header
                 Row(
@@ -89,7 +77,7 @@ fun TransactionDetailDialog(
                         text = stringResource(R.string.detail_title),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = FlowpayTextWhite
                     )
                     Box(
                         modifier = Modifier
@@ -118,27 +106,13 @@ fun TransactionDetailDialog(
                     text = stringResource(R.string.amount_rupees, CurrencyFormat.inr(transaction.amount)),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
-                    color = accent.headerGradientStart,
+                    color = statusColor,
                     textAlign = TextAlign.Center
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Status pill
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(statusColor.copy(alpha = 0.15f))
-                        .padding(horizontal = 12.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = transaction.status.lowercase()
-                            .replaceFirstChar { it.uppercase() },
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = statusColor
-                    )
-                }
+                StatusIndicator(status = transaction.status)
 
                 // Non-success outcomes get a plain-language explanation
                 statusExplainerText(transaction.status)?.let { explainer ->
@@ -277,16 +251,14 @@ fun TransactionDetailDialog(
                         )
                     }
                 }
-            }
         }
-    }
 
     // Deletion is permanent, so confirm before removing the record.
     if (showDeleteConfirm && onDelete != null) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
             containerColor = FlowpayDarkGray,
-            titleContentColor = Color.White,
+            titleContentColor = FlowpayTextWhite,
             textContentColor = FlowpayTextPale,
             title = {
                 Text(
@@ -297,8 +269,7 @@ fun TransactionDetailDialog(
             },
             text = {
                 Text(
-                    "This removes the record from your history on this device. " +
-                        "It cannot be undone and does not affect the actual payment.",
+                    stringResource(R.string.detail_delete_confirm_body),
                     fontSize = 14.sp,
                     lineHeight = 20.sp
                 )
@@ -347,7 +318,7 @@ private fun DetailRow(
                 text = value,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color.White,
+                color = FlowpayTextWhite,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -366,7 +337,7 @@ private fun DetailRow(
         ) {
             Icon(
                 imageVector = Icons.Default.ContentCopy,
-                contentDescription = "Copy",
+                contentDescription = stringResource(R.string.detail_copy),
                 modifier = Modifier.size(14.dp),
                 tint = FlowpayTextLightGray
             )

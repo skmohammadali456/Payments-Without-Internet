@@ -174,27 +174,27 @@
 
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/qr_step_paste_vpa"
-                android:textSize="15sp" android:textColor="@color/divider_dark"
+                android:textSize="15sp" android:textColor="@color/text_primary_light"
                 android:lineSpacingExtra="2dp" android:layout_marginBottom="10dp" />
 
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/qr_step_enter_amount"
-                android:textSize="15sp" android:textColor="@color/divider_dark"
+                android:textSize="15sp" android:textColor="@color/text_primary_light"
                 android:lineSpacingExtra="2dp" android:layout_marginBottom="10dp" />
 
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/qr_step_press_one"
-                android:textSize="15sp" android:textColor="@color/divider_dark"
+                android:textSize="15sp" android:textColor="@color/text_primary_light"
                 android:lineSpacingExtra="2dp" android:layout_marginBottom="10dp" />
 
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/qr_step_enter_pin"
-                android:textSize="15sp" android:textColor="@color/divider_dark"
+                android:textSize="15sp" android:textColor="@color/text_primary_light"
                 android:lineSpacingExtra="2dp" android:layout_marginBottom="10dp" />
 
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/qr_step_press_cancel"
-                android:textSize="15sp" android:textColor="@color/divider_dark"
+                android:textSize="15sp" android:textColor="@color/text_primary_light"
                 android:lineSpacingExtra="2dp" />
 
         </LinearLayout>
@@ -219,7 +219,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:background="@drawable/scan_error_banner_bg"
-        android:textColor="@color/white"
+        android:textColor="@color/error_red"
         android:textSize="14sp"
         android:lineSpacingExtra="2dp"
         android:padding="16dp"

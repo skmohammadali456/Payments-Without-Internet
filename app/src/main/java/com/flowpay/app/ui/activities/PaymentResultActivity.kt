@@ -233,11 +233,11 @@ class PaymentResultActivity : AppCompatActivity() {
         }
     }
 
-    /** SUCCESS look: brand-blue gradient circle, blue heading, green amount. */
+    /** SUCCESS look: green confirmation heading and amount. */
     private fun applySuccessAccent() {
         statusCircle.backgroundTintList = null
         statusCircle.background = ContextCompat.getDrawable(this, R.drawable.circle_success_bg)
-        statusText.setTextColor(ContextCompat.getColor(this, R.color.transaction_primary))
+        statusText.setTextColor(ContextCompat.getColor(this, R.color.flowpay_green))
         amountText.setTextColor(ContextCompat.getColor(this, R.color.flowpay_green))
     }
 
