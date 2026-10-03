@@ -10,6 +10,7 @@
     </style>
 
     <style name="Theme.Flowpay" parent="Base.Theme.Flowpay">
+        <item name="android:forceDarkAllowed">false</item>
         <item name="android:windowBackground">@color/screen_background</item>
         <item name="android:colorBackground">@color/screen_background</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>

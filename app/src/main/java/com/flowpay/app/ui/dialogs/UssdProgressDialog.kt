@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.flowpay.app.R
-import com.flowpay.app.ui.theme.FlowpayDarkGray
-import com.flowpay.app.ui.theme.FlowpayAccentBlue
+import com.flowpay.app.ui.theme.FlowpaySurface
+import com.flowpay.app.ui.theme.FlowpayAccent
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayOutlineGray
 import com.flowpay.app.ui.theme.FlowpayTextGray
-import com.flowpay.app.ui.theme.FlowpayTextLightGray
+import com.flowpay.app.ui.theme.FlowpayTextSecondary
 import com.flowpay.app.ui.theme.FlowpayTextPale
 import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
 import kotlinx.coroutines.delay
@@ -91,7 +91,7 @@ private fun UssdProgressDialogContent(
             .fillMaxWidth()
             .padding(32.dp),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = FlowpayDarkGray),
+        colors = CardDefaults.cardColors(containerColor = FlowpaySurface),
         border = BorderStroke(1.dp, FlowpayLightGray)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
@@ -129,7 +129,7 @@ private fun UssdProgressDialogContent(
                     },
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = FlowpayTextWhite,
+                    color = FlowpayOnSurface,
                     textAlign = TextAlign.Center
                 )
 
@@ -143,7 +143,7 @@ private fun UssdProgressDialogContent(
                     },
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = FlowpayTextLightGray,
+                    color = FlowpayTextSecondary,
                     textAlign = TextAlign.Center,
                     lineHeight = 24.sp
                 )
@@ -169,7 +169,7 @@ private fun UssdProgressDialogContent(
                                 text = stringResource(R.string.ussd_dlg_not_yet),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = FlowpayTextWhite,
+                                color = FlowpayOnSurface,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -276,7 +276,7 @@ private fun UssdProgressDialogContent(
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = stringResource(R.string.ussd_dlg_cd_close),
-                    tint = FlowpayTextLightGray,
+                    tint = FlowpayTextSecondary,
                     modifier = Modifier.size(22.dp)
                 )
             }
@@ -296,7 +296,7 @@ val PhoneIcon: ImageVector
         ).apply {
             path(
                 fill = null,
-                stroke = androidx.compose.ui.graphics.SolidColor(FlowpayAccentBlue),
+                stroke = androidx.compose.ui.graphics.SolidColor(FlowpayAccent),
                 strokeLineWidth = 2f,
                 strokeLineCap = androidx.compose.ui.graphics.StrokeCap.Round,
                 strokeLineJoin = androidx.compose.ui.graphics.StrokeJoin.Round

@@ -17,13 +17,10 @@ import androidx.compose.ui.graphics.Color
 // ─────────────────────────────────────────────────────────────────────────
 
 // Surfaces (darkest → lightest)
-val FlowpayBlack = Color(0xFFFFFFFF)
+val FlowpaySurface = Color(0xFFFFFFFF)
 
 /** Screen background behind cards/lists. */
 val FlowpaySurfaceDim = Color(0xFFF5F7F8)
-
-/** Card / dialog surface. */
-val FlowpayDarkGray = Color(0xFFFFFFFF)
 
 /** Elevated surface: input fields, chips, avatars. */
 val FlowpayMediumGray = Color(0xFFEEF2F4)
@@ -42,12 +39,12 @@ val FlowpayDisabledGray = Color(0xFF667780)
 val FlowpayTextGray = Color(0xFF667085)
 
 /** Secondary text: captions, labels, timestamps. */
-val FlowpayTextLightGray = Color(0xFF475467)
+val FlowpayTextSecondary = Color(0xFF475467)
 
 /** Long-form body text on dark dialogs. */
 val FlowpayTextPale = Color(0xFF344054)
 
-val FlowpayTextWhite = Color(0xFF101828)
+val FlowpayOnSurface = Color(0xFF101828)
 
 // Card Colors (light card variant)
 val FlowpayCardBackground = Color(0xFFFFFFFF)
@@ -55,7 +52,7 @@ val FlowpayCardText = Color(0xFF101828)
 val FlowpayCardSubtext = Color(0xFF475467)
 
 // Accents
-val FlowpayAccentBlue = Color(0xFF155B73)
+val FlowpayAccent = Color(0xFF155B73)
 val FlowpayAccentGreen = Color(0xFF146C43)
 val FlowpayAccentGreenBright = Color(0xFF146C43)
 

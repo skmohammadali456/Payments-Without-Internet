@@ -117,15 +117,15 @@ import com.flowpay.app.ui.components.TransactionDetailDialog
 import com.flowpay.app.ui.components.StatusIndicator
 import com.flowpay.app.ui.dialogs.ContactPickerDialog
 import com.flowpay.app.ui.theme.BlueAccentTheme
-import com.flowpay.app.ui.theme.FlowpayDarkGray
-import com.flowpay.app.ui.theme.FlowpayAccentBlue
+import com.flowpay.app.ui.theme.FlowpaySurface
+import com.flowpay.app.ui.theme.FlowpayAccent
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
 import com.flowpay.app.ui.theme.FlowpayOutlineGray
 import com.flowpay.app.ui.theme.FlowpayStatusError
 import com.flowpay.app.ui.theme.FlowpaySurfaceDim
 import com.flowpay.app.ui.theme.FlowpayTextGray
-import com.flowpay.app.ui.theme.FlowpayTextLightGray
+import com.flowpay.app.ui.theme.FlowpayTextSecondary
 import com.flowpay.app.ui.theme.FlowpayTextPale
 import com.flowpay.app.ui.theme.FlowpayTheme
 import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
@@ -377,7 +377,7 @@ private fun ScanQrButton(
             .fillMaxWidth()
             .heightIn(min = Spacing.touchTarget)
             .clip(RoundedCornerShape(12.dp))
-            .background(FlowpayAccentBlue)
+            .background(FlowpayAccent)
             .clickable(enabled = !isScanning, onClick = onQRScanClick)
             .padding(horizontal = Spacing.medium, vertical = Spacing.small),
         verticalAlignment = Alignment.CenterVertically,
@@ -659,13 +659,13 @@ fun MainScreen(
                                     Text(
                                         text = stringResource(R.string.home_title),
                                         style = MaterialTheme.typography.headlineMedium,
-                                        color = FlowpayTextWhite
+                                        color = FlowpayOnSurface
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
                                         text = stringResource(R.string.home_subtitle),
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = FlowpayTextLightGray
+                                        color = FlowpayTextSecondary
                                     )
                                 }
 
@@ -687,7 +687,7 @@ fun MainScreen(
                                     Icon(
                                         imageVector = Icons.Outlined.Settings,
                                         contentDescription = stringResource(R.string.settings_title),
-                                        tint = FlowpayTextWhite,
+                                        tint = FlowpayOnSurface,
                                         modifier = Modifier.size(24.dp)
                                     )
                                 }
@@ -716,14 +716,14 @@ fun MainScreen(
                                         Text(
                                             text = stringResource(R.string.home_connected_bank),
                                             fontSize = 12.sp,
-                                            color = FlowpayTextLightGray,
+                                            color = FlowpayTextSecondary,
                                             maxLines = 1
                                         )
                                         Spacer(modifier = Modifier.height(6.dp))
                                         Text(
                                             text = selectedBankName,
                                             style = MaterialTheme.typography.titleMedium,
-                                            color = FlowpayTextWhite,
+                                            color = FlowpayOnSurface,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis
                                         )
@@ -741,7 +741,7 @@ fun MainScreen(
                                         Icon(
                                             imageVector = Icons.Default.AccountBalanceWallet,
                                             contentDescription = null,
-                                            tint = FlowpayAccentBlue,
+                                            tint = FlowpayAccent,
                                             modifier = Modifier.size(26.dp)
                                         )
                                     }
@@ -817,7 +817,7 @@ fun MainScreen(
                         Text(
                             text = stringResource(R.string.home_recent_payees),
                             style = MaterialTheme.typography.titleMedium,
-                            color = FlowpayTextWhite
+                            color = FlowpayOnSurface
                         )
                         Spacer(Modifier.height(Spacing.small))
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(Spacing.small)) {
@@ -846,14 +846,14 @@ fun MainScreen(
                                         Icon(
                                             imageVector = Icons.Default.Person,
                                             contentDescription = null,
-                                            tint = FlowpayAccentBlue,
+                                            tint = FlowpayAccent,
                                             modifier = Modifier.size(18.dp)
                                         )
                                         Spacer(Modifier.width(Spacing.small))
                                         Text(
                                             text = name,
                                             style = MaterialTheme.typography.bodyMedium,
-                                            color = FlowpayTextWhite,
+                                            color = FlowpayOnSurface,
                                             maxLines = 1
                                         )
                                     }
@@ -895,7 +895,7 @@ fun MainScreen(
                                         imageVector = Icons.Default.History,
                                         contentDescription = null,
                                         modifier = Modifier.size(20.dp),
-                                        tint = FlowpayAccentBlue
+                                        tint = FlowpayAccent
                                     )
                                 }
                                 Spacer(modifier = Modifier.width(12.dp))
@@ -903,12 +903,12 @@ fun MainScreen(
                                     Text(
                                         text = stringResource(R.string.home_recent_payments),
                                         style = MaterialTheme.typography.titleMedium,
-                                        color = FlowpayTextWhite
+                                        color = FlowpayOnSurface
                                     )
                                     Text(
                                         text = stringResource(R.string.home_recent_payments_subtitle),
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = FlowpayTextLightGray
+                                        color = FlowpayTextSecondary
                                     )
                                 }
                             }
@@ -937,14 +937,14 @@ fun MainScreen(
                                 ) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(32.dp),
-                                        color = FlowpayAccentBlue,
+                                        color = FlowpayAccent,
                                         strokeWidth = 3.dp
                                     )
                                     Spacer(modifier = Modifier.height(20.dp))
                                     Text(
                                         text = stringResource(R.string.home_loading_transactions),
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = FlowpayTextLightGray
+                                        color = FlowpayTextSecondary
                                     )
                                 }
                             }
@@ -959,19 +959,19 @@ fun MainScreen(
                                     Text(
                                         text = stringResource(R.string.home_failed_to_load),
                                         style = MaterialTheme.typography.titleMedium,
-                                        color = FlowpayTextWhite
+                                        color = FlowpayOnSurface
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
                                         text = error.orEmpty(),
-                                        color = FlowpayTextLightGray,
+                                        color = FlowpayTextSecondary,
                                         textAlign = TextAlign.Center
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
                                     TextButton(onClick = { transactionViewModel.refresh() }) {
                                         Text(
                                             text = stringResource(R.string.home_retry),
-                                            color = FlowpayAccentBlue
+                                            color = FlowpayAccent
                                         )
                                     }
                                 }
@@ -994,19 +994,19 @@ fun MainScreen(
                                             imageVector = Icons.Default.History,
                                             contentDescription = null,
                                             modifier = Modifier.size(32.dp),
-                                            tint = FlowpayTextLightGray
+                                            tint = FlowpayTextSecondary
                                         )
                                     }
                                     Spacer(modifier = Modifier.height(20.dp))
                                     Text(
                                         text = stringResource(R.string.home_no_transactions),
                                         style = MaterialTheme.typography.titleMedium,
-                                        color = FlowpayTextWhite
+                                        color = FlowpayOnSurface
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
                                         text = stringResource(R.string.home_history_empty),
-                                        color = FlowpayTextLightGray,
+                                        color = FlowpayTextSecondary,
                                         textAlign = TextAlign.Center
                                     )
                                 }
@@ -1127,7 +1127,7 @@ fun TransactionItem(payment: PaymentDetails, onClick: () -> Unit) {
                 Text(
                     text = payment.recipientName?.takeIf(String::isNotBlank) ?: payment.phoneNumber,
                     style = MaterialTheme.typography.titleSmall,
-                    color = FlowpayTextWhite,
+                    color = FlowpayOnSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -1135,7 +1135,7 @@ fun TransactionItem(payment: PaymentDetails, onClick: () -> Unit) {
                 Text(
                     text = formatDate(payment.timestamp),
                     style = MaterialTheme.typography.bodySmall,
-                    color = FlowpayTextLightGray,
+                    color = FlowpayTextSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Medium
@@ -1157,7 +1157,7 @@ private fun TransactionItemAmount(amount: Double, status: PaymentStatus) {
         Text(
             text = stringResource(R.string.amount_rupees, CurrencyFormat.inr(amount)),
             style = MaterialTheme.typography.titleSmall,
-            color = FlowpayTextWhite,
+            color = FlowpayOnSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -1193,11 +1193,11 @@ fun PayContactDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = FlowpayDarkGray,
+        containerColor = FlowpaySurface,
         title = {
             Text(
                 text = stringResource(R.string.home_pay_by_number),
-                color = FlowpayTextWhite,
+                color = FlowpayOnSurface,
                 style = MaterialTheme.typography.titleLarge
             )
         },
@@ -1248,7 +1248,7 @@ fun PayContactDialog(
                             }
                         },
                         label = {
-                            Text(stringResource(R.string.home_field_mobile_label), color = FlowpayTextLightGray)
+                            Text(stringResource(R.string.home_field_mobile_label), color = FlowpayTextSecondary)
                         },
                         placeholder = {
                             Text(stringResource(R.string.home_field_mobile_hint), color = FlowpayTextGray)
@@ -1257,8 +1257,8 @@ fun PayContactDialog(
                         singleLine = true,
                         modifier = Modifier.weight(1f),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = FlowpayTextWhite,
-                            unfocusedTextColor = FlowpayTextWhite,
+                            focusedTextColor = FlowpayOnSurface,
+                            unfocusedTextColor = FlowpayOnSurface,
                             focusedBorderColor = FlowpayOutlineGray,
                             unfocusedBorderColor = FlowpayLightGray,
                             focusedContainerColor = Color.Transparent,
@@ -1307,7 +1307,7 @@ fun PayContactDialog(
                         }
                     },
                     label = {
-                        Text(stringResource(R.string.home_field_amount_label), color = FlowpayTextLightGray)
+                        Text(stringResource(R.string.home_field_amount_label), color = FlowpayTextSecondary)
                     },
                     placeholder = {
                         Text(stringResource(R.string.home_field_amount_hint), color = FlowpayTextGray)
@@ -1317,8 +1317,8 @@ fun PayContactDialog(
                     isError = isOverCap,
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = FlowpayTextWhite,
-                        unfocusedTextColor = FlowpayTextWhite,
+                        focusedTextColor = FlowpayOnSurface,
+                        unfocusedTextColor = FlowpayOnSurface,
                         focusedBorderColor = if (isOverCap) FlowpayStatusError else FlowpayOutlineGray,
                         unfocusedBorderColor = if (isOverCap) FlowpayStatusError else FlowpayLightGray,
                         focusedContainerColor = Color.Transparent,
@@ -1358,7 +1358,7 @@ fun PayContactDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.action_cancel), color = FlowpayTextLightGray)
+                Text(stringResource(R.string.action_cancel), color = FlowpayTextSecondary)
             }
         }
     )
@@ -1398,13 +1398,13 @@ fun PermissionExplanationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = FlowpayDarkGray,
+        containerColor = FlowpaySurface,
         title = {
             Text(
                 text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = FlowpayTextWhite
+                color = FlowpayOnSurface
             )
         },
         text = {
@@ -1427,7 +1427,7 @@ fun PermissionExplanationDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.action_not_now), color = FlowpayTextLightGray)
+                Text(stringResource(R.string.action_not_now), color = FlowpayTextSecondary)
             }
         }
     )

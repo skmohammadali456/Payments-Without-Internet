@@ -16,12 +16,12 @@ data class FlowpayAccentTheme(
 )
 
 val BlueAccentTheme = FlowpayAccentTheme(
-    primary = FlowpayAccentBlue,
-    primaryDark = FlowpayAccentBlue,
-    headerGradientStart = FlowpayAccentBlue,
-    headerGradientEnd = FlowpayAccentBlue,
-    accent = FlowpayAccentBlue,
-    accentLight = FlowpayAccentBlue
+    primary = FlowpayAccent,
+    primaryDark = FlowpayAccent,
+    headerGradientStart = FlowpayAccent,
+    headerGradientEnd = FlowpayAccent,
+    accent = FlowpayAccent,
+    accentLight = FlowpayAccent
 )
 
 val LocalFlowpayAccentTheme = compositionLocalOf { BlueAccentTheme }

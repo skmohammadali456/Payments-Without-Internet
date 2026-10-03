@@ -88,7 +88,7 @@
             android:scaleType="centerInside"
             android:padding="18dp"
             android:contentDescription="@string/qr_torch"
-            app:tint="@color/white" />
+            app:tint="@color/text_primary_light" />
 
         <!-- Same 64dp box, same background and padding as the torch so the
              pair reads as one symmetric group centred on the screen. -->
@@ -102,7 +102,7 @@
             android:scaleType="centerInside"
             android:padding="18dp"
             android:contentDescription="@string/qr_pick_from_gallery"
-            app:tint="@color/white" />
+            app:tint="@color/text_primary_light" />
 
     </LinearLayout>
 
@@ -128,7 +128,7 @@
             android:scaleType="centerInside"
             android:padding="10dp"
             android:contentDescription="@null"
-            app:tint="@color/white" />
+            app:tint="@color/text_primary_light" />
 
     </FrameLayout>
 

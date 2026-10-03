@@ -43,14 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.flowpay.app.helpers.SetupHelper
 import com.flowpay.app.ui.theme.BlueAccentTheme
-import com.flowpay.app.ui.theme.FlowpayAccentBlue
-import com.flowpay.app.ui.theme.FlowpayDarkGray
+import com.flowpay.app.ui.theme.FlowpayAccent
+import com.flowpay.app.ui.theme.FlowpaySurface
 import com.flowpay.app.ui.theme.FlowpayDisabledGray
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
 import com.flowpay.app.ui.theme.FlowpaySurfaceDim
-import com.flowpay.app.ui.theme.FlowpayTextLightGray
-import com.flowpay.app.ui.theme.FlowpayTextWhite
+import com.flowpay.app.ui.theme.FlowpayTextSecondary
+import com.flowpay.app.ui.theme.FlowpayOnSurface
 import com.flowpay.app.ui.theme.FlowpayTheme
 import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
 
@@ -227,7 +227,7 @@ fun HeaderCard() {
                         Icon(
                             imageVector = Icons.Default.AccountBalanceWallet,
                             contentDescription = null,
-                            tint = FlowpayAccentBlue,
+                            tint = FlowpayAccent,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -238,7 +238,7 @@ fun HeaderCard() {
                         Text(
                             text = stringResource(R.string.setup_flowpay),
                             style = TextStyle(
-                                color = FlowpayTextWhite,
+                                color = FlowpayOnSurface,
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 0.3.sp,
@@ -252,7 +252,7 @@ fun HeaderCard() {
                         Text(
                             text = stringResource(R.string.setup_step_1_of_2),
                             fontSize = 14.sp,
-                            color = FlowpayTextLightGray,
+                            color = FlowpayTextSecondary,
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -263,7 +263,7 @@ fun HeaderCard() {
                 Text(
                     text = stringResource(R.string.configure_upi_payments),
                     fontSize = 15.sp,
-                    color = FlowpayTextLightGray,
+                    color = FlowpayTextSecondary,
                     fontWeight = FontWeight.Normal,
                     lineHeight = 22.sp
                 )
@@ -310,12 +310,12 @@ private fun SetupSectionHeader(
                 text = title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = FlowpayTextWhite
+                color = FlowpayOnSurface
             )
             Text(
                 text = subtitle,
                 fontSize = 12.sp,
-                color = FlowpayTextLightGray
+                color = FlowpayTextSecondary
             )
         }
     }
@@ -327,7 +327,7 @@ private fun SetupFieldLabel(text: String) {
         text = text,
         fontSize = 13.sp,
         fontWeight = FontWeight.Medium,
-        color = FlowpayTextLightGray,
+        color = FlowpayTextSecondary,
         modifier = Modifier.padding(bottom = 8.dp)
     )
 }
@@ -376,11 +376,11 @@ fun BankSelectionSection(
                     focusedBorderColor = FlowpayDisabledGray,
                     unfocusedBorderColor = FlowpayLightGray,
                     focusedContainerColor = FlowpayMediumGray,
-                    unfocusedContainerColor = FlowpayDarkGray,
-                    focusedTextColor = FlowpayTextWhite,
-                    unfocusedTextColor = FlowpayTextWhite,
-                    focusedTrailingIconColor = FlowpayTextLightGray,
-                    unfocusedTrailingIconColor = FlowpayTextLightGray
+                    unfocusedContainerColor = FlowpaySurface,
+                    focusedTextColor = FlowpayOnSurface,
+                    unfocusedTextColor = FlowpayOnSurface,
+                    focusedTrailingIconColor = FlowpayTextSecondary,
+                    unfocusedTrailingIconColor = FlowpayTextSecondary
                 ),
                 shape = RoundedCornerShape(12.dp),
                 textStyle = TextStyle(fontSize = 15.sp),
@@ -396,7 +396,7 @@ fun BankSelectionSection(
                         text = {
                             Text(
                                 label,
-                                color = FlowpayTextWhite,
+                                color = FlowpayOnSurface,
                                 fontSize = 15.sp
                             )
                         },
@@ -464,11 +464,11 @@ fun SimCardSelectionSection(
                     focusedBorderColor = FlowpayDisabledGray,
                     unfocusedBorderColor = FlowpayLightGray,
                     focusedContainerColor = FlowpayMediumGray,
-                    unfocusedContainerColor = FlowpayDarkGray,
-                    focusedTextColor = FlowpayTextWhite,
-                    unfocusedTextColor = FlowpayTextWhite,
-                    focusedTrailingIconColor = FlowpayTextLightGray,
-                    unfocusedTrailingIconColor = FlowpayTextLightGray
+                    unfocusedContainerColor = FlowpaySurface,
+                    focusedTextColor = FlowpayOnSurface,
+                    unfocusedTextColor = FlowpayOnSurface,
+                    focusedTrailingIconColor = FlowpayTextSecondary,
+                    unfocusedTrailingIconColor = FlowpayTextSecondary
                 ),
                 shape = RoundedCornerShape(12.dp),
                 textStyle = TextStyle(fontSize = 15.sp),
@@ -484,7 +484,7 @@ fun SimCardSelectionSection(
                         text = {
                             Text(
                                 label,
-                                color = FlowpayTextWhite,
+                                color = FlowpayOnSurface,
                                 fontSize = 15.sp
                             )
                         },
@@ -539,7 +539,7 @@ fun SimCardSelectionSection(
                 text = stringResource(R.string.enable_dual_sim),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = FlowpayTextWhite
+                color = FlowpayOnSurface
             )
         }
 
@@ -578,11 +578,11 @@ fun SimCardSelectionSection(
                         focusedBorderColor = FlowpayDisabledGray,
                         unfocusedBorderColor = FlowpayLightGray,
                         focusedContainerColor = FlowpayMediumGray,
-                        unfocusedContainerColor = FlowpayDarkGray,
-                        focusedTextColor = FlowpayTextWhite,
-                        unfocusedTextColor = FlowpayTextWhite,
-                        focusedTrailingIconColor = FlowpayTextLightGray,
-                        unfocusedTrailingIconColor = FlowpayTextLightGray
+                        unfocusedContainerColor = FlowpaySurface,
+                        focusedTextColor = FlowpayOnSurface,
+                        unfocusedTextColor = FlowpayOnSurface,
+                        focusedTrailingIconColor = FlowpayTextSecondary,
+                        unfocusedTrailingIconColor = FlowpayTextSecondary
                     ),
                     shape = RoundedCornerShape(12.dp),
                     textStyle = TextStyle(fontSize = 15.sp),
@@ -598,7 +598,7 @@ fun SimCardSelectionSection(
                             text = {
                                 Text(
                                     label,
-                                    color = FlowpayTextWhite,
+                                    color = FlowpayOnSurface,
                                     fontSize = 15.sp
                                 )
                             },
@@ -691,7 +691,7 @@ fun DisclaimerSection(
                             }
                         ),
                         fontSize = 14.sp,
-                        color = FlowpayTextLightGray,
+                        color = FlowpayTextSecondary,
                         lineHeight = 20.sp
                     )
                     Spacer(modifier = Modifier.height(6.dp))

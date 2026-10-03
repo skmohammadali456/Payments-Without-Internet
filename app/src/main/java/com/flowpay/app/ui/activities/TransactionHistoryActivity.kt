@@ -46,8 +46,8 @@ import com.flowpay.app.ui.theme.BlueAccentTheme
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
 import com.flowpay.app.ui.theme.FlowpayStatusError
-import com.flowpay.app.ui.theme.FlowpayTextLightGray
-import com.flowpay.app.ui.theme.FlowpayTextWhite
+import com.flowpay.app.ui.theme.FlowpayTextSecondary
+import com.flowpay.app.ui.theme.FlowpayOnSurface
 import com.flowpay.app.ui.theme.FlowpaySurfaceDim
 import com.flowpay.app.ui.theme.Spacing
 import com.flowpay.app.ui.theme.FlowpayTheme
@@ -227,7 +227,7 @@ fun TransactionHistoryScreen(
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
                                 contentDescription = stringResource(R.string.history_back),
-                                tint = FlowpayTextWhite,
+                                tint = FlowpayOnSurface,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -238,7 +238,7 @@ fun TransactionHistoryScreen(
                             text = stringResource(R.string.history_title),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = FlowpayTextWhite,
+                            color = FlowpayOnSurface,
                             letterSpacing = 0.3.sp,
                             modifier = Modifier.weight(1f)
                         )
@@ -294,7 +294,7 @@ fun TransactionHistoryScreen(
                         placeholder = {
                             Text(
                                 stringResource(R.string.history_search_placeholder),
-                                color = FlowpayTextLightGray,
+                                color = FlowpayTextSecondary,
                                 fontSize = 14.sp
                             )
                         },
@@ -306,7 +306,7 @@ fun TransactionHistoryScreen(
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = null,
-                                tint = FlowpayTextLightGray,
+                                tint = FlowpayTextSecondary,
                                 modifier = Modifier.size(20.dp)
                             )
                         },
@@ -316,15 +316,15 @@ fun TransactionHistoryScreen(
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = stringResource(R.string.history_clear_search),
-                                        tint = FlowpayTextLightGray,
+                                        tint = FlowpayTextSecondary,
                                         modifier = Modifier.size(18.dp)
                                     )
                                 }
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = FlowpayTextWhite,
-                            unfocusedTextColor = FlowpayTextWhite,
+                            focusedTextColor = FlowpayOnSurface,
+                            unfocusedTextColor = FlowpayOnSurface,
                             focusedBorderColor = accent.primary,
                             unfocusedBorderColor = FlowpayLightGray,
                             focusedContainerColor = Color.White,
@@ -378,7 +378,7 @@ fun TransactionHistoryScreen(
                                     text = stringResource(R.string.history_error_title),
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = FlowpayTextWhite
+                                    color = FlowpayOnSurface
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 TextButton(onClick = { transactionViewModel.refresh() }) {
@@ -410,7 +410,7 @@ fun TransactionHistoryScreen(
                                     Icon(
                                         imageVector = Icons.Default.History,
                                         contentDescription = null,
-                                        tint = FlowpayTextLightGray,
+                                        tint = FlowpayTextSecondary,
                                         modifier = Modifier.size(32.dp)
                                     )
                                 }
@@ -423,7 +423,7 @@ fun TransactionHistoryScreen(
                                     },
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = FlowpayTextWhite
+                                    color = FlowpayOnSurface
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
@@ -433,7 +433,7 @@ fun TransactionHistoryScreen(
                                         stringResource(R.string.history_empty_body)
                                     },
                                     fontSize = 13.sp,
-                                    color = FlowpayTextLightGray
+                                    color = FlowpayTextSecondary
                                 )
                             }
                         }
@@ -450,7 +450,7 @@ fun TransactionHistoryScreen(
                                         text = dateLabel,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = FlowpayTextLightGray,
+                                        color = FlowpayTextSecondary,
                                         letterSpacing = 0.5.sp,
                                         modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                                     )
@@ -508,7 +508,7 @@ fun TransactionHistoryScreen(
                 Text(
                     text = stringResource(R.string.history_filters_title),
                     style = MaterialTheme.typography.titleLarge,
-                    color = FlowpayTextWhite
+                    color = FlowpayOnSurface
                 )
                 Spacer(Modifier.height(Spacing.small))
                 statusFilters.forEach { (filter, labelRes) ->
@@ -526,7 +526,7 @@ fun TransactionHistoryScreen(
                         Text(
                             text = stringResource(labelRes),
                             style = MaterialTheme.typography.bodyLarge,
-                            color = FlowpayTextWhite,
+                            color = FlowpayOnSurface,
                             modifier = Modifier.weight(1f)
                         )
                         RadioButton(
@@ -576,7 +576,7 @@ private fun TransactionHistoryItem(
                 text = displayName,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
-                color = FlowpayTextWhite,
+                color = FlowpayOnSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -584,7 +584,7 @@ private fun TransactionHistoryItem(
             Text(
                 text = formatTime(transaction.timestamp),
                 fontSize = 13.sp,
-                color = FlowpayTextLightGray,
+                color = FlowpayTextSecondary,
                 maxLines = 1
             )
         }
@@ -598,7 +598,7 @@ private fun TransactionHistoryItem(
                 text = stringResource(R.string.amount_rupees, CurrencyFormat.inr(transaction.amount)),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = FlowpayTextWhite,
+                color = FlowpayOnSurface,
                 maxLines = 1
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -620,7 +620,7 @@ private fun TransactionAvatar(initial: Char) {
             text = initial.toString(),
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
-            color = FlowpayTextWhite
+            color = FlowpayOnSurface
         )
     }
 }

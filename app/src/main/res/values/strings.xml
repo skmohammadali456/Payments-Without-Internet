@@ -332,6 +332,9 @@
     <string name="testcfg_instructions_title">Configure Payment Methods</string>
     <string name="testcfg_instructions_body">We\'ll test both scanning and manual payment methods to ensure everything works smoothly</string>
     <string name="testcfg_status_completed">Completed</string>
+    <string name="testcfg_code_ussd">*99#</string>
+    <string name="testcfg_code_upi123">UPI123</string>
+    <string name="testcfg_unsupported_symbol">!</string>
     <string name="contact_picker_title">Select Contact</string>
     <string name="contact_search_description">Search</string>
     <string name="contact_picker_empty">No contacts found</string>

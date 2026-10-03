@@ -13,17 +13,17 @@ import androidx.core.view.WindowCompat
 import com.flowpay.app.utils.findComponentActivity
 
 private val LightColorScheme = lightColorScheme(
-    primary = FlowpayAccentBlue,
-    onPrimary = FlowpayTextWhite,
-    secondary = FlowpayAccentBlue,
-    onSecondary = FlowpayTextWhite,
-    tertiary = FlowpayAccentBlue,
+    primary = FlowpayAccent,
+    onPrimary = FlowpayOnSurface,
+    secondary = FlowpayAccent,
+    onSecondary = FlowpayOnSurface,
+    tertiary = FlowpayAccent,
     background = FlowpaySurfaceDim,
-    onBackground = FlowpayTextWhite,
-    surface = FlowpayDarkGray,
-    onSurface = FlowpayTextWhite,
+    onBackground = FlowpayOnSurface,
+    surface = FlowpaySurface,
+    onSurface = FlowpayOnSurface,
     surfaceVariant = FlowpayMediumGray,
-    onSurfaceVariant = FlowpayTextLightGray,
+    onSurfaceVariant = FlowpayTextSecondary,
     outline = FlowpayOutlineGray,
     error = FlowpayStatusError
 )

@@ -28,13 +28,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.flowpay.app.R
-import com.flowpay.app.ui.theme.FlowpayDarkGray
+import com.flowpay.app.ui.theme.FlowpaySurface
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
 import com.flowpay.app.ui.theme.FlowpayOutlineGray
 import com.flowpay.app.ui.theme.FlowpayTextGray
-import com.flowpay.app.ui.theme.FlowpayTextLightGray
-import com.flowpay.app.ui.theme.FlowpayTextWhite
+import com.flowpay.app.ui.theme.FlowpayTextSecondary
+import com.flowpay.app.ui.theme.FlowpayOnSurface
 import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -98,7 +98,7 @@ fun ContactPickerDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = Modifier.fillMaxHeight(0.8f),
-        containerColor = FlowpayDarkGray,
+        containerColor = FlowpaySurface,
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -107,7 +107,7 @@ fun ContactPickerDialog(
             ) {
                 Text(
                     stringResource(R.string.contact_picker_title),
-                    color = FlowpayTextWhite,
+                    color = FlowpayOnSurface,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -115,7 +115,7 @@ fun ContactPickerDialog(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(R.string.detail_close),
-                        tint = FlowpayTextLightGray
+                        tint = FlowpayTextSecondary
                     )
                 }
             }
@@ -138,12 +138,12 @@ fun ContactPickerDialog(
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(R.string.contact_search_description),
-                            tint = FlowpayTextLightGray
+                            tint = FlowpayTextSecondary
                         )
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = FlowpayTextWhite,
-                        unfocusedTextColor = FlowpayTextWhite,
+                        focusedTextColor = FlowpayOnSurface,
+                        unfocusedTextColor = FlowpayOnSurface,
                         focusedBorderColor = FlowpayOutlineGray,
                         unfocusedBorderColor = FlowpayLightGray,
                         cursorColor = LocalFlowpayAccentTheme.current.accent,
@@ -256,7 +256,7 @@ fun ContactItem(
             ) {
                 Text(
                     text = contact.name,
-                    color = FlowpayTextWhite,
+                    color = FlowpayOnSurface,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
@@ -265,7 +265,7 @@ fun ContactItem(
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = contact.phoneNumber,
-                    color = FlowpayTextLightGray,
+                    color = FlowpayTextSecondary,
                     fontSize = 14.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

@@ -304,6 +304,10 @@ class QRScannerActivity : ComponentActivity() {
                         R.drawable.bottom_action_button_bg
                     }
                 )
+                btnFlash.imageTintList = ContextCompat.getColorStateList(
+                    this,
+                    if (isFlashOn) R.color.white else R.color.text_primary_light
+                )
             }
 
             btnGallery.setOnClickListener {

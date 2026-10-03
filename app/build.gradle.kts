@@ -37,7 +37,7 @@ android {
     buildToolsVersion = "35.0.0"
 
     defaultConfig {
-        applicationId = "com.flowpay.app"
+        applicationId = "com.skmohammadali.wavepay"
         minSdk = 29
         targetSdk = 35
         // versionCode is monotonic and independent of versionName: builds with
