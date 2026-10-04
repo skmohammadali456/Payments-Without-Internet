@@ -11,6 +11,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -41,7 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flowpay.app.R
 import com.flowpay.app.data.Transaction
 import com.flowpay.app.ui.components.TransactionDetailDialog
-import com.flowpay.app.ui.components.StatusIndicator
+import com.flowpay.app.ui.components.StatusChip
 import com.flowpay.app.ui.theme.BlueAccentTheme
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
@@ -83,6 +84,7 @@ fun statusLabelRes(status: String): Int = when (status.uppercase()) {
 
 private fun matchesStatusFilter(status: String, filter: String?): Boolean = when (filter) {
     null -> true
+    "NEEDS_ATTENTION" -> status.uppercase() in setOf("NEEDS_REVIEW", "UNVERIFIED", "PENDING")
     "SUCCESS" -> status.equals("SUCCESS", ignoreCase = true)
     "NEEDS_REVIEW" -> status.equals("NEEDS_REVIEW", ignoreCase = true)
     "UNVERIFIED" -> status.equals("UNVERIFIED", ignoreCase = true)
@@ -112,7 +114,7 @@ class TransactionHistoryActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TransactionHistoryScreen(
     onBackClick: () -> Unit
@@ -335,6 +337,27 @@ fun TransactionHistoryScreen(
                     )
                 }
 
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = Spacing.medium),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.small)
+                ) {
+                    listOf(
+                        null to R.string.history_filter_all,
+                        "SUCCESS" to R.string.history_filter_success,
+                        "NEEDS_ATTENTION" to R.string.history_filter_needs_attention,
+                        "FAILED" to R.string.history_filter_failed
+                    ).forEach { (filter, labelRes) ->
+                        FilterChip(
+                            selected = selectedStatus == filter,
+                            onClick = { selectedStatus = filter },
+                            label = { Text(stringResource(labelRes)) }
+                        )
+                    }
+                }
+
                 // ═══ TRANSACTION LIST ═══
                 when {
                     isLoading -> {
@@ -445,15 +468,20 @@ fun TransactionHistoryScreen(
                         ) {
                             groupedTransactions.forEach { (dateLabel, transactions) ->
                                 // Date section header
-                                item(key = "header_$dateLabel") {
-                                    Text(
-                                        text = dateLabel,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = FlowpayTextSecondary,
-                                        letterSpacing = 0.5.sp,
-                                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                                    )
+                                stickyHeader(key = "header_$dateLabel") {
+                                    Surface(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        color = FlowpaySurfaceDim
+                                    ) {
+                                        Text(
+                                            text = dateLabel,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = FlowpayTextSecondary,
+                                            letterSpacing = 0.5.sp,
+                                            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                                        )
+                                    }
                                 }
 
                                 // Transaction items with dividers
@@ -602,7 +630,10 @@ private fun TransactionHistoryItem(
                 maxLines = 1
             )
             Spacer(modifier = Modifier.height(4.dp))
-            StatusPill(transaction.status)
+            StatusChip(
+                status = transaction.status,
+                label = stringResource(statusLabelRes(transaction.status))
+            )
         }
     }
 }
@@ -626,6 +657,3 @@ private fun TransactionAvatar(initial: Char) {
 }
 
 @Composable
-private fun StatusPill(status: String) {
-    StatusIndicator(status = status)
-}

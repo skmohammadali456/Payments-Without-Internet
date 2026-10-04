@@ -5,13 +5,13 @@
     <!-- Setup Screen Strings -->
     <string name="setup_flowpay">Set up WavePay</string>
     <string name="configure_upi_payments">Configure your UPI payments</string>
-    <string name="bank_selection">Bank Selection</string>
+    <string name="bank_selection">Bank selection</string>
     <string name="choose_primary_bank">Choose your primary bank for UPI payments</string>
-    <string name="sim_card_selection">SIM Card Selection</string>
+    <string name="sim_card_selection">SIM card selection</string>
     <string name="configure_sim_cards">Configure your SIM cards for USSD payments</string>
-    <string name="enable_dual_sim">Enable Dual SIM support</string>
+    <string name="enable_dual_sim">Enable dual-SIM support</string>
     <string name="secondary_sim">Secondary SIM</string>
-    <string name="complete_setup">Complete Setup</string>
+    <string name="complete_setup">Complete setup</string>
     <string name="disclaimer">Disclaimer</string>
     <string name="disclaimer_summary">WavePay never touches your money or your UPI PIN. It only dials your bank\'s *99# / UPI 123 flow for you. Tap to read the full disclaimer.</string>
     <string name="disclaimer_text">WavePay is a free, open-source app. It is not a bank, wallet, or payment processor, and it never holds, moves, or has access to your money.\n\nAll WavePay does is dial for you. It automates your bank\'s *99# / UPI 123 (UPI 123PAY) menu. Every payment is authorised and processed directly by you, your bank, and NPCI over your mobile network, exactly as if you had dialled it yourself. WavePay is not affiliated with or endorsed by NPCI or any bank.\n\nYour UPI PIN never touches WavePay. The app does not use Android accessibility services, screen reading, or any form of input capture. You enter your PIN only inside your bank\'s own *99# / IVR flow, where WavePay cannot see it, intercept it, or store it.\n\nYour data stays on your device. WavePay reads incoming bank SMS only while a payment is in progress, and only to detect the confirmation. It never uploads your messages, contacts, or transaction history anywhere.\n\nBy continuing, you confirm that you have read and understood this.</string>
@@ -110,12 +110,12 @@
 
     <!-- Payment result dialogs (shown over the dialer). There is no success
          dialog: PaymentResultActivity is the only success surface. -->
-    <string name="dialog_cancelled_title">Transaction Cancelled</string>
+    <string name="dialog_cancelled_title">Transaction cancelled</string>
     <string name="dialog_cancelled_message">The call ended before the payment flow could complete. No payment was processed.</string>
     <string name="dialog_cancelled_by_user_message">The transaction was cancelled. No payment was processed.</string>
-    <string name="dialog_failed_title">Transaction Failed</string>
+    <string name="dialog_failed_title">Transaction failed</string>
     <string name="dialog_failed_message">Your bank reported the payment as failed. Any debited amount is normally reversed automatically — check your bank if it isn\'t.</string>
-    <string name="dialog_awaiting_title">Request Sent</string>
+    <string name="dialog_awaiting_title">Request sent</string>
     <string name="dialog_awaiting_message">Your payment request was sent to the UPI service.\n\nIf your bank calls you back, press 1 to confirm and enter your UPI PIN only in your bank\'s own flow, never in WavePay. WavePay will show the result as soon as your bank\'s confirmation SMS arrives.</string>
     <string name="action_ok">OK</string>
     <string name="action_got_it">Got it</string>
@@ -148,13 +148,13 @@
     <string name="notif_channel_payment_results_desc">The outcome of each payment — success, failure, or needs checking</string>
 
     <!-- Payment result screen -->
-    <string name="payment_status_success">Payment Successful</string>
-    <string name="payment_status_failed">Payment Failed</string>
-    <string name="payment_status_needs_review">Check This Payment</string>
-    <string name="payment_status_unverified">No Confirmation Received</string>
-    <string name="payment_status_cancelled">Payment Cancelled</string>
-    <string name="payment_status_pending">Waiting for Confirmation</string>
-    <string name="payment_status_unknown">Outcome Unknown</string>
+    <string name="payment_status_success">Payment successful</string>
+    <string name="payment_status_failed">Payment failed</string>
+    <string name="payment_status_needs_review">Check this payment</string>
+    <string name="payment_status_unverified">No confirmation received</string>
+    <string name="payment_status_cancelled">Payment cancelled</string>
+    <string name="payment_status_pending">Waiting for confirmation</string>
+    <string name="payment_status_unknown">Outcome unknown</string>
     <string name="label_bank">Bank</string>
     <string name="label_bank_reference">Bank reference</string>
     <string name="label_date_time">Date &amp; Time</string>
@@ -168,14 +168,14 @@
 
     <!-- Call overlay (shown during the payment call) -->
     <string name="overlay_secure_transfer">Payment steps</string>
-    <string name="overlay_processing_payment">Processing Payment</string>
+    <string name="overlay_processing_payment">Processing payment</string>
     <string name="overlay_amount">Amount</string>
     <string name="overlay_to">To</string>
     <string name="overlay_audio_muted">Call volume lowered</string>
     <string name="overlay_terminate">Cancel payment</string>
     <string name="overlay_connecting">Connecting to the UPI service…</string>
     <string name="overlay_sending_request">Sending your payment request…</string>
-    <string name="overlay_pin_notice">Your bank will call you back to complete the payment. Enter your UPI PIN only in your bank\'s own flow, never in WavePay.</string>
+    <string name="overlay_pin_notice">Enter your UPI PIN only on your bank\'s screen.</string>
     <string name="overlay_request_sent">Request sent. Waiting for your bank\'s confirmation SMS…</string>
     <string name="amount_rupees">₹%1$s</string>
     <string name="percent_format">%1$d%%</string>
@@ -198,7 +198,7 @@
     <string name="qr_gallery_no_code">No QR code found in that image</string>
     <string name="qr_gallery_unreadable">That image could not be opened</string>
 
-    <string name="qr_steps_title">Follow These Steps</string>
+    <string name="qr_steps_title">Follow these steps</string>
     <string name="qr_step_paste_vpa">1. Paste the VPA from clipboard</string>
     <string name="qr_step_enter_amount">2. Enter the amount</string>
     <string name="qr_step_press_one">3. Press one to skip</string>
@@ -210,7 +210,7 @@
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>
     <string name="settings_not_set">Not set</string>
-    <string name="settings_clear_data_title">Clear App Data</string>
+    <string name="settings_clear_data_title">Clear app data</string>
     <string name="settings_section_bank_sim">Bank and SIM</string>
     <string name="settings_section_permissions">Permissions</string>
     <string name="settings_section_privacy">Privacy</string>
@@ -232,6 +232,10 @@
     <string name="settings_not_granted">Not granted</string>
     <string name="settings_grant">Grant</string>
     <string name="settings_configuration">Configuration</string>
+    <string name="settings_payment_setup">Payment setup</string>
+    <string name="settings_payment_methods">Payment methods</string>
+    <string name="settings_configure">Configure</string>
+    <string name="settings_open_source_attribution">Built on the open-source Flowpay project, Apache 2.0</string>
     <string name="settings_section_data">Data</string>
     <string name="settings_section_about">About</string>
     <string name="settings_reset_all">Reset settings</string>
@@ -246,7 +250,7 @@
     <string name="contacts_search_hint">Search contacts…</string>
 
     <!-- Home screen -->
-    <string name="home_field_mobile_label">Mobile Number</string>
+    <string name="home_field_mobile_label">Mobile number</string>
     <string name="home_field_mobile_hint">10 digits</string>
     <string name="home_field_amount_label">Amount (₹)</string>
     <string name="home_field_amount_hint">Enter amount</string>
@@ -273,6 +277,9 @@
     <string name="home_or">or</string>
     <string name="home_select_contact">Select contact</string>
     <string name="home_payee_unknown">Payee</string>
+    <string name="home_finish_setup">Finish setup</string>
+    <string name="home_finish_setup_body">Complete your payment checks before using these payment options.</string>
+    <string name="home_limit_helper">Per-transaction limit: %1$s</string>
     <string name="permission_phone_title">Phone permission</string>
     <string name="permission_phone_reason">WavePay needs phone access to place the call to your bank or UPI service. WavePay never sees your UPI PIN.</string>
     <string name="permission_sms_title">SMS permission</string>
@@ -294,7 +301,7 @@
     <string name="setup_permission_done">Continue setup</string>
     <string name="setup_permission_dismissed">You can grant this permission later in Settings.</string>
     <string name="call_step_follow_prompts">Follow the prompts from your bank or UPI service.</string>
-    <string name="call_step_pin">Enter your UPI PIN only in the bank\'s official payment flow.</string>
+    <string name="call_step_pin">Enter your UPI PIN only on your bank\'s screen.</string>
     <string name="call_step_wait">Wait for a confirmation SMS before treating the payment as complete.</string>
     <string name="qr_confirm_title">Review payment details</string>
     <string name="qr_confirm_details">Payee: %1$s\nUPI ID: %2$s\nAmount: %3$s\nPer-transaction limit: %4$s</string>
@@ -304,10 +311,10 @@
     <!-- Setup screen -->
     <string name="setup_step_1_of_2">Step 1 of 2</string>
     <string name="setup_onboarding_step">Step %1$d of 6</string>
-    <string name="setup_welcome_intro">Set up your bank and SIM, then check that your payment options are ready.</string>
+    <string name="setup_welcome_intro">Pay without internet. Set up your bank and SIM, then check that your payment options are ready.</string>
     <string name="setup_permission_timing">WavePay asks for access only when a call or payment feature needs it.</string>
     <string name="setup_get_started">Get started</string>
-    <string name="setup_select_bank">Select Bank</string>
+    <string name="setup_select_bank">Select bank</string>
     <string name="setup_choose_your_bank">Choose your bank</string>
     <string name="setup_primary_sim">Primary SIM</string>
     <string name="setup_select_primary_sim">Select your primary SIM</string>
@@ -323,15 +330,15 @@
     <string name="testcfg_set_up">Set up</string>
     <string name="testcfg_jio_no_ussd">Jio does not support *99# USSD payments</string>
     <string name="testcfg_ussd_reported_issue">You reported USSD didn\'t work — scan to pay is off. Tap to try setup again.</string>
-    <string name="testcfg_enable_scan_payments">Enable pay via scanning payments</string>
-    <string name="testcfg_enable_manual_payments">Enable manual payment entries</string>
-    <string name="testcfg_all_tests_passed_continue">All Tests Passed! Continue</string>
+    <string name="testcfg_enable_scan_payments">Turn on scan to pay</string>
+    <string name="testcfg_enable_manual_payments">Turn on pay by number</string>
+    <string name="testcfg_all_tests_passed_continue">Tests passed. Continue</string>
     <string name="testcfg_continue_partial">Continue with partial setup</string>
     <string name="testcfg_complete_tests_to_continue">Complete tests to continue</string>
     <string name="testcfg_skip_for_now">Skip for now — payments may not work until tests pass</string>
     <string name="testcfg_call_consent_body">This places a real call to your carrier\'s *99# / UPI 123 service to check setup on your SIM. Standard call or USSD charges from your operator may apply.</string>
     <string name="testcfg_header_icon_desc">Test</string>
-    <string name="testcfg_title">Test Configuration</string>
+    <string name="testcfg_title">Test configuration</string>
     <string name="testcfg_step">Step 6 of 6</string>
     <string name="testcfg_substep">Test %1$d of 2</string>
     <string name="testcfg_step_ussd_title">Test *99# USSD</string>
@@ -339,13 +346,13 @@
     <string name="testcfg_next_upi123">Next: UPI 123PAY</string>
     <string name="testcfg_back_to_ussd">Back to USSD</string>
     <string name="testcfg_intro">Complete these tests to verify your payment methods work correctly</string>
-    <string name="testcfg_instructions_title">Configure Payment Methods</string>
+    <string name="testcfg_instructions_title">Configure payment methods</string>
     <string name="testcfg_instructions_body">We\'ll test both scanning and manual payment methods to ensure everything works smoothly</string>
     <string name="testcfg_status_completed">Completed</string>
     <string name="testcfg_code_ussd">*99#</string>
     <string name="testcfg_code_upi123">UPI123</string>
-    <string name="testcfg_unsupported_symbol">!</string>
-    <string name="contact_picker_title">Select Contact</string>
+    <string name="testcfg_unsupported_symbol">×</string>
+    <string name="contact_picker_title">Select contact</string>
     <string name="contact_search_description">Search</string>
     <string name="contact_picker_empty">No contacts found</string>
     <string name="contact_picker_no_matches">No matches for %1$s</string>
@@ -358,10 +365,11 @@
     <string name="history_search_placeholder">Search by name or number…</string>
     <string name="history_group_today">Today</string>
     <string name="history_group_yesterday">Yesterday</string>
-    <string name="history_group_this_week">This Week</string>
+    <string name="history_group_this_week">This week</string>
     <string name="history_filter_all">All</string>
     <string name="history_filter_success">Success</string>
     <string name="history_filter_needs_review">Needs review</string>
+    <string name="history_filter_needs_attention">Needs attention</string>
     <string name="history_filter_unverified">Unverified</string>
     <string name="history_filter_pending">Pending</string>
     <string name="history_filter_failed">Failed</string>
@@ -376,38 +384,38 @@
     <string name="history_empty_search_body">Try another search or status filter.</string>
 
     <!-- Transaction detail dialog -->
-    <string name="detail_title">Transaction Details</string>
+    <string name="detail_title">Transaction details</string>
     <string name="detail_delete_confirm_title">Delete this transaction?</string>
     <string name="detail_close">Close</string>
     <string name="detail_label_recipient">Recipient</string>
-    <string name="detail_label_phone_number">Phone Number</string>
-    <string name="detail_bank_confirmation">Bank Confirmation</string>
-    <string name="detail_delete_transaction">Delete Transaction</string>
+    <string name="detail_label_phone_number">Phone number</string>
+    <string name="detail_bank_confirmation">Bank confirmation</string>
+    <string name="detail_delete_transaction">Delete transaction</string>
     <string name="detail_copy">Copy</string>
     <string name="detail_delete_confirm_body">This removes the record from your history on this device. It cannot be undone and does not affect the actual payment.</string>
 
     <!-- USSD setup progress dialog -->
     <string name="ussd_dlg_initializing">Initializing…</string>
-    <string name="ussd_dlg_cd_ussd_setup">USSD Setup</string>
+    <string name="ussd_dlg_cd_ussd_setup">USSD setup</string>
     <string name="ussd_dlg_cd_close">Close</string>
-    <string name="ussd_dlg_setup_complete_title">Setup Complete?</string>
-    <string name="ussd_dlg_setting_up_title">Setting Up Your Payment System</string>
+    <string name="ussd_dlg_setup_complete_title">Setup complete?</string>
+    <string name="ussd_dlg_setting_up_title">Setting up your payment system</string>
     <string name="ussd_dlg_setup_complete_body">Did you complete the *99# setup?\n\nThis enables seamless payment scanning.</string>
     <string name="ussd_dlg_setting_up_body">We have triggered USSD. It usually takes a few seconds for the data sessions to appear—be patient and don\'t close the app.</string>
-    <string name="ussd_dlg_not_yet">Not Yet</string>
+    <string name="ussd_dlg_not_yet">Not yet</string>
     <string name="ussd_dlg_yes">Yes</string>
     <string name="ussd_dlg_already_set_up">I\'ve already set up *99#</string>
     <string name="ussd_dlg_does_not_work">It doesn\'t work for me</string>
 
     <!-- UPI 123 setup progress dialog -->
-    <string name="upi123_dlg_setup_icon_desc">UPI123 Setup</string>
+    <string name="upi123_dlg_setup_icon_desc">UPI 123 setup</string>
     <string name="upi123_dlg_close">Close</string>
-    <string name="upi123_dlg_setup_complete_title">Setup Complete?</string>
-    <string name="upi123_dlg_setting_up_title">Setting Up UPI123</string>
+    <string name="upi123_dlg_setup_complete_title">Setup complete?</string>
+    <string name="upi123_dlg_setting_up_title">Setting up UPI 123</string>
     <string name="upi123_dlg_setup_complete_message">Did you complete the UPI123 setup?\n\nThis enables manual payment entries.</string>
     <string name="upi123_dlg_ivr_triggered_message">The UPI 123 IVR call has been triggered. Go through the steps it asks you to complete—when you\'re done, end the call and we\'ll ask you to confirm.</string>
     <string name="upi123_dlg_configuring">Configuring UPI123…</string>
-    <string name="upi123_dlg_not_yet">Not Yet</string>
+    <string name="upi123_dlg_not_yet">Not yet</string>
     <string name="upi123_dlg_yes">Yes</string>
     <string name="upi123_dlg_already_set_up">I\'ve already set up UPI 123</string>
 

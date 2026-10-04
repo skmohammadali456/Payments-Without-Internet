@@ -12,7 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipRect
 import com.flowpay.app.ui.theme.WavePayBrand
-import com.flowpay.app.ui.theme.WavePayBrandTint
+import com.flowpay.app.ui.theme.WavePayBrandPressed
 
 @Composable
 fun WaveHeader(
@@ -42,7 +42,7 @@ fun WaveHeader(
                 close()
             }
             clipRect {
-                drawPath(wave, WavePayBrandTint.copy(alpha = 0.38f))
+                drawPath(wave, WavePayBrandPressed)
             }
         }
         content()

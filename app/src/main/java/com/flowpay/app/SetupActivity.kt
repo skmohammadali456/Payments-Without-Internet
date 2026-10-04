@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.Sms
 import androidx.compose.material3.*
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -84,12 +85,12 @@ class SetupActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupScreen(setupHelper: SetupHelper) {
-    var selectedBank by remember { mutableStateOf("") }
-    var selectedPrimarySim by remember { mutableStateOf("") }
-    var selectedSecondarySim by remember { mutableStateOf("") }
-    var isDualSimEnabled by remember { mutableStateOf(false) }
-    var disclaimerAccepted by remember { mutableStateOf(false) }
-    var currentPage by remember { mutableStateOf(0) }
+    var selectedBank by rememberSaveable { mutableStateOf("") }
+    var selectedPrimarySim by rememberSaveable { mutableStateOf("") }
+    var selectedSecondarySim by rememberSaveable { mutableStateOf("") }
+    var isDualSimEnabled by rememberSaveable { mutableStateOf(false) }
+    var disclaimerAccepted by rememberSaveable { mutableStateOf(false) }
+    var currentPage by rememberSaveable { mutableStateOf(0) }
 
     val banks = setupHelper.getBanks()
     val simCarriers = setupHelper.getSimCarriers()
@@ -608,13 +609,19 @@ fun DisclaimerSection(
         Spacer(modifier = Modifier.height(Spacing.small))
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .toggleable(
+                    value = isAccepted,
+                    role = Role.Checkbox,
+                    onValueChange = onAcceptedChange
+                ),
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(Spacing.small)
         ) {
             Checkbox(
                 checked = isAccepted,
-                onCheckedChange = onAcceptedChange,
+                onCheckedChange = null,
                 colors = CheckboxDefaults.colors(
                     checkedColor = WavePayBrand,
                     uncheckedColor = WavePayOutline
@@ -631,16 +638,19 @@ fun DisclaimerSection(
                     style = MaterialTheme.typography.bodyLarge,
                     color = WavePaySecondaryText
                 )
-                TextButton(onClick = { isExpanded = !isExpanded }) {
-                    Text(
-                        text = stringResource(
-                            if (isExpanded) R.string.setup_show_less else R.string.setup_show_more
-                        ),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = WavePayBrand
-                    )
-                }
             }
+        }
+        TextButton(
+            onClick = { isExpanded = !isExpanded },
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text(
+                text = stringResource(
+                    if (isExpanded) R.string.setup_show_less else R.string.setup_show_more
+                ),
+                style = MaterialTheme.typography.labelLarge,
+                color = WavePayBrand
+            )
         }
     }
 }

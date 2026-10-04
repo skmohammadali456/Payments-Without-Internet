@@ -8,6 +8,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -43,8 +44,11 @@ import com.flowpay.app.BuildConfig
 import com.flowpay.app.FlowpayApplication
 import com.flowpay.app.R
 import com.flowpay.app.SetupActivity
+import com.flowpay.app.TestConfigurationActivity
 import com.flowpay.app.data.SettingsRepository
 import com.flowpay.app.repository.TransactionRepository
+import com.flowpay.app.ui.components.SectionCard
+import com.flowpay.app.ui.components.StatusChip
 import com.flowpay.app.ui.theme.BlueAccentTheme
 import com.flowpay.app.ui.theme.FlowpaySurface
 import com.flowpay.app.ui.theme.FlowpayDisabledGray
@@ -295,6 +299,23 @@ fun SettingsScreen(
                     }
                 }
 
+                item { Spacer(modifier = Modifier.height(8.dp)) }
+                item { SectionHeader(stringResource(R.string.settings_payment_setup)) }
+                item {
+                    GroupCard {
+                        SettingsRow(
+                            icon = Icons.Default.Tune,
+                            title = stringResource(R.string.settings_payment_methods),
+                            value = stringResource(R.string.settings_configure),
+                            onClick = {
+                                context.startActivity(
+                                    Intent(context, TestConfigurationActivity::class.java)
+                                )
+                            }
+                        )
+                    }
+                }
+
                 // ═══ PERMISSIONS ═══
                 item { Spacer(modifier = Modifier.height(8.dp)) }
                 item { SectionHeader(stringResource(R.string.settings_section_permissions)) }
@@ -342,6 +363,21 @@ fun SettingsScreen(
                             granted = state.permissions["contacts"] ?: false,
                             onRequest = {
                                 onRequestPermissions(arrayOf(Manifest.permission.READ_CONTACTS))
+                            }
+                        )
+                        GroupDivider()
+                        PermissionRow(
+                            icon = Icons.Default.Layers,
+                            title = stringResource(R.string.settings_overlay_permission),
+                            subtitle = stringResource(R.string.settings_overlay_permission_reason),
+                            granted = state.permissions["overlay"] ?: false,
+                            onRequest = {
+                                context.startActivity(
+                                    Intent(
+                                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                        Uri.fromParts("package", context.packageName, null)
+                                    )
+                                )
                             }
                         )
                     }
@@ -398,6 +434,13 @@ fun SettingsScreen(
                             icon = Icons.Default.PhoneAndroid,
                             title = stringResource(R.string.settings_android),
                             value = Build.VERSION.RELEASE
+                        )
+                        GroupDivider()
+                        Text(
+                            text = stringResource(R.string.settings_open_source_attribution),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = FlowpayTextSecondary,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
                         )
                     }
                 }
@@ -522,13 +565,11 @@ private fun SectionHeader(title: String) {
 
 @Composable
 private fun GroupCard(content: @Composable ColumnScope.() -> Unit) {
-    Surface(
+    SectionCard(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        color = FlowpaySurface
-    ) {
-        Column(content = content)
-    }
+        contentPadding = PaddingValues(0.dp),
+        content = content
+    )
 }
 
 @Composable
@@ -665,35 +706,11 @@ private fun PermissionRow(
             )
         }
 
-        // Status pill
-        if (granted) {
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = FlowpayMediumGray
-            ) {
-                Text(
-                    text = stringResource(R.string.settings_granted),
-                    color = LocalFlowpayAccentTheme.current.primary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                )
-            }
-        } else {
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = accent.primary.copy(alpha = 0.12f),
-                modifier = Modifier.clickable(onClick = onRequest)
-            ) {
-                Text(
-                    text = stringResource(R.string.settings_grant),
-                    color = accent.primary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                )
-            }
-        }
+        StatusChip(
+            status = if (granted) "UNKNOWN" else "NEEDS_SETUP",
+            label = stringResource(if (granted) R.string.settings_granted else R.string.settings_grant),
+            modifier = Modifier.clickable(enabled = !granted, onClick = onRequest)
+        )
     }
 }
 

@@ -37,6 +37,7 @@ import com.flowpay.app.ui.theme.FlowpaySurfaceDim
 import com.flowpay.app.ui.theme.FlowpayTextSecondary
 import com.flowpay.app.ui.theme.FlowpayTextPale
 import com.flowpay.app.ui.theme.statusColor
+import com.flowpay.app.ui.theme.Spacing
 import com.flowpay.app.utils.CurrencyFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -82,7 +83,7 @@ fun TransactionDetailDialog(
                     )
                     Box(
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(Spacing.touchTarget)
                             .clip(RoundedCornerShape(8.dp))
                             .background(FlowpaySurface)
                             .clickable(
@@ -95,7 +96,7 @@ fun TransactionDetailDialog(
                             imageVector = Icons.Default.Close,
                             contentDescription = stringResource(R.string.detail_close),
                             tint = FlowpayTextSecondary,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
@@ -131,12 +132,8 @@ fun TransactionDetailDialog(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Detail card
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = FlowpaySurface,
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                SectionCard(contentPadding = PaddingValues(Spacing.medium)) {
+                    Column {
                         // Bank reference — the number from the bank's own SMS,
                         // the one a user would actually quote back to their
                         // bank in a dispute. Shown first and only when the
@@ -205,12 +202,8 @@ fun TransactionDetailDialog(
                 // Privacy-safe bank summary (raw SMS bodies are not stored)
                 if (transaction.smsExcerpt.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = FlowpaySurface,
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
+                    SectionCard(contentPadding = PaddingValues(Spacing.compact)) {
+                        Column {
                             Text(
                                 text = stringResource(R.string.detail_bank_confirmation),
                                 fontSize = 12.sp,

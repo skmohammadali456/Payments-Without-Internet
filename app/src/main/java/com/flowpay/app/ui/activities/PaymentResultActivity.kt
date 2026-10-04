@@ -3,19 +3,9 @@
 
 package com.flowpay.app.ui.activities
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ValueAnimator
 import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
-import android.view.WindowInsets
-import android.view.WindowInsetsController
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -39,6 +29,7 @@ class PaymentResultActivity : AppCompatActivity() {
     private lateinit var tickImageView: ImageView
     private lateinit var statusText: TextView
     private lateinit var statusExplainerText: TextView
+    private lateinit var statusHeader: LinearLayout
     private lateinit var amountText: TextView
     private lateinit var detailsCard: CardView
     private lateinit var bankNameText: TextView
@@ -87,6 +78,7 @@ class PaymentResultActivity : AppCompatActivity() {
         tickImageView = findViewById(R.id.iv_success_tick)
         statusText = findViewById(R.id.tv_status)
         statusExplainerText = findViewById(R.id.tv_status_explainer)
+        statusHeader = findViewById(R.id.success_container)
         amountText = findViewById(R.id.tv_amount)
         detailsCard = findViewById(R.id.card_details)
         bankNameText = findViewById(R.id.tv_bank_name)
@@ -109,6 +101,10 @@ class PaymentResultActivity : AppCompatActivity() {
     /** Return the animated views to their pre-animation (hidden) state. */
     private fun resetViewsForAnimation() {
         tickImageView.alpha = 0f
+        statusHeader.backgroundTintList = null
+        statusExplainerText.background = null
+        statusExplainerText.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+        statusExplainerText.compoundDrawablePadding = 0
         statusText.alpha = 0f
         statusExplainerText.alpha = 0f
         amountText.alpha = 0f
@@ -136,10 +132,9 @@ class PaymentResultActivity : AppCompatActivity() {
         // property is set explicitly (never relying on layout defaults) so an
         // onNewIntent re-render from a different status resets cleanly.
         //
-        // Color language: SUCCESS wears the brand look (blue gradient circle,
-        // blue heading, green amount). Non-success outcomes wear their status
-        // color on circle + heading + amount so a FAILED result can never be
-        // mistaken for a success at a glance. The glyph is always white.
+        // The top surface, heading, amount, and icon all reflect the bank's
+        // reported outcome. SUCCESS is green; all other statuses use their
+        // designated warning, danger, or neutral color.
         when (status.uppercase(Locale.ROOT)) {
             TransactionStatus.FAILED -> {
                 statusText.text = getString(R.string.payment_status_failed)
@@ -181,6 +176,17 @@ class PaymentResultActivity : AppCompatActivity() {
                 statusExplainerText.visibility = View.VISIBLE
                 tickImageView.setImageResource(R.drawable.ic_unverified)
                 applyStatusAccent(R.color.unverified_grey)
+                statusExplainerText.setBackgroundResource(R.drawable.result_unverified_callout_bg)
+                val calloutIcon = ContextCompat.getDrawable(this, R.drawable.ic_unverified)?.mutate()
+                calloutIcon?.setTint(ContextCompat.getColor(this, R.color.status_neutral))
+                statusExplainerText.setCompoundDrawablesWithIntrinsicBounds(
+                    calloutIcon,
+                    null,
+                    null,
+                    null
+                )
+                statusExplainerText.compoundDrawablePadding =
+                    (8 * resources.displayMetrics.density).toInt()
             }
             else -> {
                 // Unknown values never fall open to the success styling.
@@ -239,6 +245,9 @@ class PaymentResultActivity : AppCompatActivity() {
         statusCircle.background = ContextCompat.getDrawable(this, R.drawable.circle_success_bg)
         statusText.setTextColor(ContextCompat.getColor(this, R.color.flowpay_green))
         amountText.setTextColor(ContextCompat.getColor(this, R.color.flowpay_green))
+        statusHeader.backgroundTintList = android.content.res.ColorStateList.valueOf(
+            ContextCompat.getColor(this, R.color.status_success_tint)
+        )
     }
 
     /** Non-success look: one status colour across circle, heading and amount. */
@@ -248,6 +257,14 @@ class PaymentResultActivity : AppCompatActivity() {
         statusCircle.backgroundTintList = android.content.res.ColorStateList.valueOf(color)
         statusText.setTextColor(color)
         amountText.setTextColor(color)
+        val tintRes = when (colorRes) {
+            R.color.error_red -> R.color.status_danger_tint
+            R.color.warning_orange -> R.color.status_warning_tint
+            else -> R.color.status_neutral_tint
+        }
+        statusHeader.backgroundTintList = android.content.res.ColorStateList.valueOf(
+            ContextCompat.getColor(this, tintRes)
+        )
     }
 
     private fun formatAmount(amount: String): String = CurrencyFormat.inr(amount)
@@ -296,95 +313,31 @@ class PaymentResultActivity : AppCompatActivity() {
     }
 
     private fun startAnimations() {
-        // Animate tick with draw effect
-        Handler(Looper.getMainLooper()).postDelayed({
-            animateTickMark()
-        }, 300)
+        val duration = 200L
 
-        // Fade in status text (and its explainer line, when visible)
-        Handler(Looper.getMainLooper()).postDelayed({
-            statusText.animate()
-                .alpha(1f)
-                .setDuration(500)
-                .start()
-            statusExplainerText.animate()
-                .alpha(1f)
-                .setDuration(500)
-                .start()
-        }, 800)
+        statusHeader.alpha = 0f
+        statusHeader.animate().alpha(1f).setDuration(duration).start()
 
-        // Fade in amount
-        Handler(Looper.getMainLooper()).postDelayed({
-            amountText.animate()
-                .alpha(1f)
-                .scaleX(1.1f)
-                .scaleY(1.1f)
-                .setDuration(400)
-                .withEndAction {
-                    amountText.animate()
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .setDuration(200)
-                        .start()
-                }
-                .start()
-        }, 1200)
+        tickImageView.alpha = 0f
+        tickImageView.scaleX = 0.9f
+        tickImageView.scaleY = 0.9f
+        tickImageView.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(duration)
+            .start()
 
-        // Slide up details card
-        Handler(Looper.getMainLooper()).postDelayed({
-            detailsCard.translationY = 100f
-            detailsCard.animate()
-                .alpha(1f)
-                .translationY(0f)
-                .setDuration(500)
-                .setInterpolator(AccelerateDecelerateInterpolator())
-                .start()
-        }, 1600)
+        detailsCard.alpha = 0f
+        detailsCard.translationY = 16f
+        detailsCard.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(duration)
+            .start()
 
-        // Fade in done button
-        Handler(Looper.getMainLooper()).postDelayed({
-            doneButton.animate()
-                .alpha(1f)
-                .setDuration(500)
-                .start()
-        }, 2000)
-    }
-
-    private fun animateTickMark() {
-        tickImageView.alpha = 1f
-
-        val animator = ValueAnimator.ofFloat(0f, 1f)
-        animator.duration = 1000
-        animator.interpolator = AccelerateDecelerateInterpolator()
-
-        animator.addUpdateListener { animation ->
-            val progress = animation.animatedValue as Float
-            // Create custom tick drawing animation
-            tickImageView.scaleX = progress
-            tickImageView.scaleY = progress
-            tickImageView.rotation = progress * 360f
-        }
-
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                tickImageView.rotation = 0f
-                // Pulse animation after tick completes
-                tickImageView.animate()
-                    .scaleX(1.2f)
-                    .scaleY(1.2f)
-                    .setDuration(200)
-                    .withEndAction {
-                        tickImageView.animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .setDuration(200)
-                            .start()
-                    }
-                    .start()
-            }
-        })
-
-        animator.start()
+        doneButton.alpha = 0f
+        doneButton.animate().alpha(1f).setDuration(duration).start()
     }
 
     private fun navigateToMain() {

@@ -3,7 +3,6 @@
 
 package com.flowpay.app.ui.dialogs
 
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,15 +24,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.flowpay.app.R
-import com.flowpay.app.ui.theme.FlowpaySurface
-import com.flowpay.app.ui.theme.FlowpayOnSurface
-import com.flowpay.app.ui.theme.FlowpayAccent
-import com.flowpay.app.ui.theme.FlowpayLightGray
-import com.flowpay.app.ui.theme.FlowpayOutlineGray
-import com.flowpay.app.ui.theme.FlowpayTextGray
-import com.flowpay.app.ui.theme.FlowpayTextSecondary
-import com.flowpay.app.ui.theme.FlowpayTextPale
-import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
+import com.flowpay.app.ui.theme.Spacing
+import com.flowpay.app.ui.theme.WavePayBrand
+import com.flowpay.app.ui.theme.WavePayBrandTint
+import com.flowpay.app.ui.theme.WavePayInk
+import com.flowpay.app.ui.theme.WavePayOnBrand
+import com.flowpay.app.ui.theme.WavePayOutline
+import com.flowpay.app.ui.theme.WavePaySecondaryText
+import com.flowpay.app.ui.theme.WavePaySurface
 import kotlinx.coroutines.delay
 
 @Composable
@@ -76,30 +74,19 @@ private fun UssdProgressDialogContent(
     onDismiss: () -> Unit = {},
     onDoesNotWork: () -> Unit = {}
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.6f,
-        targetValue = 1.0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = EaseInOut),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "alpha"
-    )
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(32.dp),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = FlowpaySurface),
-        border = BorderStroke(1.dp, FlowpayLightGray)
+            .padding(Spacing.large),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = WavePaySurface),
+        border = BorderStroke(1.dp, WavePayOutline)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp)
+                    .padding(Spacing.large)
                     .padding(top = 4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -107,7 +94,7 @@ private fun UssdProgressDialogContent(
                     modifier = Modifier
                         .size(80.dp)
                         .background(
-                            color = LocalFlowpayAccentTheme.current.accent.copy(alpha = alpha * 0.2f),
+                            color = WavePayBrandTint,
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -115,7 +102,7 @@ private fun UssdProgressDialogContent(
                     Icon(
                         imageVector = PhoneIcon,
                         contentDescription = stringResource(R.string.ussd_dlg_cd_ussd_setup),
-                        tint = LocalFlowpayAccentTheme.current.accent,
+                        tint = WavePayBrand,
                         modifier = Modifier.size(48.dp)
                     )
                 }
@@ -128,9 +115,9 @@ private fun UssdProgressDialogContent(
                     } else {
                         stringResource(R.string.ussd_dlg_setting_up_title)
                     },
-                    fontSize = 24.sp,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = FlowpayOnSurface,
+                    color = WavePayInk,
                     textAlign = TextAlign.Center
                 )
 
@@ -142,9 +129,9 @@ private fun UssdProgressDialogContent(
                     } else {
                         stringResource(R.string.ussd_dlg_setting_up_body)
                     },
-                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
-                    color = FlowpayTextSecondary,
+                    color = WavePaySecondaryText,
                     textAlign = TextAlign.Center,
                     lineHeight = 24.sp
                 )
@@ -154,23 +141,23 @@ private fun UssdProgressDialogContent(
                 if (showConfigurationOptions) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.small)
                     ) {
                         Button(
                             onClick = onNotConfigured,
                             modifier = Modifier
                                 .weight(1f)
-                                .height(50.dp),
-                            shape = RoundedCornerShape(15.dp),
+                                .height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = FlowpayMediumGray
+                                containerColor = WavePayBrandTint
                             )
                         ) {
                             Text(
                                 text = stringResource(R.string.ussd_dlg_not_yet),
-                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.SemiBold,
-                                color = FlowpayOnSurface,
+                                color = WavePayBrand,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -179,17 +166,17 @@ private fun UssdProgressDialogContent(
                             onClick = onConfigured,
                             modifier = Modifier
                                 .weight(1f)
-                                .height(50.dp),
-                            shape = RoundedCornerShape(15.dp),
+                                .height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = LocalFlowpayAccentTheme.current.accent
+                                containerColor = WavePayBrand
                             )
                         ) {
                             Text(
                                 text = stringResource(R.string.ussd_dlg_yes),
-                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color.White,
+                                color = WavePayOnBrand,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -200,16 +187,15 @@ private fun UssdProgressDialogContent(
                             .fillMaxWidth()
                             .height(6.dp),
                         color = LocalFlowpayAccentTheme.current.accent,
-                        trackColor = FlowpayLightGray
+                        trackColor = WavePayOutline
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
                         text = progressMessage,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Light,
-                        color = FlowpayTextGray.copy(alpha = alpha),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = WavePaySecondaryText,
                         textAlign = TextAlign.Center
                     )
 
@@ -231,15 +217,15 @@ private fun UssdProgressDialogContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp),
-                            shape = RoundedCornerShape(15.dp),
-                            border = BorderStroke(1.dp, LocalFlowpayAccentTheme.current.accent),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, WavePayBrand),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = LocalFlowpayAccentTheme.current.accent
+                                contentColor = WavePayBrand
                             )
                         ) {
                             Text(
                                 text = stringResource(R.string.ussd_dlg_already_set_up),
-                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -251,15 +237,15 @@ private fun UssdProgressDialogContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp),
-                            shape = RoundedCornerShape(15.dp),
-                            border = BorderStroke(1.dp, FlowpayOutlineGray),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, WavePayOutline),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = FlowpayTextPale
+                                contentColor = WavePaySecondaryText
                             )
                         ) {
                             Text(
                                 text = stringResource(R.string.ussd_dlg_does_not_work),
-                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -271,13 +257,12 @@ private fun UssdProgressDialogContent(
                 onClick = onDismiss,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(4.dp)
-                    .size(40.dp)
+                    .size(48.dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = stringResource(R.string.ussd_dlg_cd_close),
-                    tint = FlowpayTextSecondary,
+                    tint = WavePaySecondaryText,
                     modifier = Modifier.size(22.dp)
                 )
             }
@@ -297,7 +282,7 @@ val PhoneIcon: ImageVector
         ).apply {
             path(
                 fill = null,
-                stroke = androidx.compose.ui.graphics.SolidColor(FlowpayAccent),
+                stroke = androidx.compose.ui.graphics.SolidColor(WavePayBrand),
                 strokeLineWidth = 2f,
                 strokeLineCap = androidx.compose.ui.graphics.StrokeCap.Round,
                 strokeLineJoin = androidx.compose.ui.graphics.StrokeJoin.Round

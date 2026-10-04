@@ -24,7 +24,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,12 +34,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -50,14 +49,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
-import androidx.compose.material.icons.filled.ArrowOutward
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PermContactCalendar
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.QrCode
-import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
@@ -86,19 +81,15 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -114,23 +105,29 @@ import com.flowpay.app.payment.messageFor
 import com.flowpay.app.ui.activities.SettingsActivity
 import com.flowpay.app.ui.activities.TransactionHistoryActivity
 import com.flowpay.app.ui.components.TransactionDetailDialog
-import com.flowpay.app.ui.components.StatusIndicator
+import com.flowpay.app.ui.components.StatusChip
+import com.flowpay.app.ui.components.EmptyState
+import com.flowpay.app.ui.components.InfoBanner
+import com.flowpay.app.ui.components.SectionCard
+import com.flowpay.app.ui.components.WaveHeader
+import com.flowpay.app.ui.components.PrimaryButton
+import com.flowpay.app.ui.components.SecondaryButton
 import com.flowpay.app.ui.dialogs.ContactPickerDialog
 import com.flowpay.app.ui.theme.BlueAccentTheme
-import com.flowpay.app.ui.theme.FlowpaySurface
 import com.flowpay.app.ui.theme.FlowpayOnSurface
 import com.flowpay.app.ui.theme.FlowpayAccent
 import com.flowpay.app.ui.theme.FlowpayLightGray
 import com.flowpay.app.ui.theme.FlowpayMediumGray
-import com.flowpay.app.ui.theme.FlowpayOutlineGray
 import com.flowpay.app.ui.theme.FlowpayStatusError
 import com.flowpay.app.ui.theme.FlowpaySurfaceDim
-import com.flowpay.app.ui.theme.FlowpayTextGray
 import com.flowpay.app.ui.theme.FlowpayTextSecondary
-import com.flowpay.app.ui.theme.FlowpayTextPale
 import com.flowpay.app.ui.theme.FlowpayTheme
 import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
 import com.flowpay.app.ui.theme.Spacing
+import com.flowpay.app.ui.theme.WavePayBrand
+import com.flowpay.app.ui.theme.WavePayCanvas
+import com.flowpay.app.ui.theme.WavePayInk
+import com.flowpay.app.ui.theme.WavePaySecondaryText
 import com.flowpay.app.utils.CurrencyFormat
 import com.flowpay.app.utils.findComponentActivity
 import com.flowpay.app.viewmodel.MainUiEvent
@@ -335,12 +332,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Payment Action Buttons - QR scan + Pay Contact.
-//
-// Each rail is locked until its own connectivity test has passed: Scan QR
-// dials *99#, Pay Contact dials the UPI 123 IVR. One composable per button,
-// because the locked/unlocked branches on both pushed the combined function
-// past detekt's complexity and parameter limits.
 @Composable
 fun PaymentActionButtons(
     onQRScanClick: () -> Unit,
@@ -349,87 +340,81 @@ fun PaymentActionButtons(
     isUssdReady: Boolean,
     isScanning: Boolean
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = Spacing.medium),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Spacing.small)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.small)
     ) {
-        ScanQrButton(onQRScanClick, isUssdReady, isScanning)
-        PayContactButton(onPayContactClick, isUpi123Ready)
-    }
-}
-
-/** Scan QR — locked until the *99# connectivity test has passed. */
-@Composable
-private fun ScanQrButton(
-    onQRScanClick: () -> Unit,
-    isUssdReady: Boolean,
-    isScanning: Boolean
-) {
-    val label = when {
-        !isUssdReady -> stringResource(R.string.home_setup_ussd)
-        isScanning -> stringResource(R.string.home_scan_opening)
-        else -> stringResource(R.string.home_scan_qr)
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = Spacing.touchTarget)
-            .clip(RoundedCornerShape(12.dp))
-            .background(FlowpayAccent)
-            .clickable(enabled = !isScanning, onClick = onQRScanClick)
-            .padding(horizontal = Spacing.medium, vertical = Spacing.small),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = if (isUssdReady) Icons.Default.QrCodeScanner else Icons.Default.Lock,
-            contentDescription = null,
-            tint = Color.White
+        PaymentActionTile(
+            text = stringResource(if (isScanning) R.string.home_scan_opening else R.string.home_scan_qr),
+            icon = Icons.Rounded.QrCodeScanner,
+            enabled = isUssdReady && !isScanning,
+            primary = true,
+            onClick = onQRScanClick,
+            modifier = Modifier.weight(1f)
         )
-        Spacer(Modifier.width(Spacing.small))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.White
+        PaymentActionTile(
+            text = stringResource(R.string.home_pay_by_number),
+            icon = Icons.Rounded.Person,
+            enabled = isUpi123Ready,
+            primary = false,
+            onClick = onPayContactClick,
+            modifier = Modifier.weight(1f)
         )
     }
 }
 
-/** Pay Contact — locked until the UPI 123 IVR connectivity test has passed. */
 @Composable
-private fun PayContactButton(
-    onPayContactClick: () -> Unit,
-    isUpi123Ready: Boolean
+private fun PaymentActionTile(
+    text: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    enabled: Boolean,
+    primary: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val accent = LocalFlowpayAccentTheme.current.accent
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = Spacing.touchTarget)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
-            .border(1.dp, FlowpayLightGray, RoundedCornerShape(12.dp))
-            .clickable(onClick = onPayContactClick)
-            .padding(horizontal = Spacing.medium, vertical = Spacing.small),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = if (isUpi123Ready) Icons.Default.Person else Icons.Default.Lock,
-            contentDescription = null,
-            tint = accent
-        )
-        Spacer(Modifier.width(Spacing.small))
-        Text(
-            text = stringResource(
-                if (isUpi123Ready) R.string.home_pay_by_number else R.string.upi123_dlg_already_set_up
+    val foreground = when {
+        !enabled -> com.flowpay.app.ui.theme.WavePayStatusNeutral
+        primary -> com.flowpay.app.ui.theme.WavePayOnBrand
+        else -> com.flowpay.app.ui.theme.WavePayBrand
+    }
+    val container = when {
+        !enabled -> com.flowpay.app.ui.theme.WavePayStatusNeutralTint
+        primary -> com.flowpay.app.ui.theme.WavePayBrand
+        else -> com.flowpay.app.ui.theme.WavePaySurface
+    }
+    Surface(
+        modifier = modifier
+            .heightIn(min = 128.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .clickable(
+                enabled = enabled,
+                role = androidx.compose.ui.semantics.Role.Button,
+                onClick = onClick
             ),
-            style = MaterialTheme.typography.titleMedium,
-            color = accent
+        color = container,
+        shape = RoundedCornerShape(20.dp),
+        border = if (primary || !enabled) null else androidx.compose.foundation.BorderStroke(
+            1.dp,
+            FlowpayLightGray
         )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(Spacing.medium),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(imageVector = icon, contentDescription = null, tint = foreground)
+            Spacer(Modifier.height(Spacing.small))
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleSmall,
+                color = foreground
+            )
+        }
     }
 }
 
@@ -463,6 +448,9 @@ fun MainScreen(
     var isUssdReady by remember {
         mutableStateOf(testResultsManager.getTestResults()?.ussdEnabled == true)
     }
+    var setupCompleted by remember {
+        mutableStateOf(sharedPreferences.getBoolean(AppConstants.KEY_SETUP_COMPLETED, false))
+    }
 
     LaunchedEffect(lifecycle) {
         snapshotFlow { lifecycle.currentState }.collect { state ->
@@ -470,6 +458,7 @@ fun MainScreen(
                 savedBank = sharedPreferences.getString(AppConstants.KEY_SELECTED_BANK, "hdfc") ?: "hdfc"
                 isUpi123Ready = testResultsManager.getTestResults()?.upi123Enabled == true
                 isUssdReady = testResultsManager.getTestResults()?.ussdEnabled == true
+                setupCompleted = sharedPreferences.getBoolean(AppConstants.KEY_SETUP_COMPLETED, false)
             }
         }
     }
@@ -628,149 +617,125 @@ fun MainScreen(
             ) {
                 Spacer(modifier = Modifier.height(Spacing.medium))
 
-                // Header Card
-                Card(
+                WaveHeader(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .heightIn(min = 168.dp)
-                        .border(1.dp, FlowpayLightGray, RoundedCornerShape(16.dp)),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                        .padding(horizontal = Spacing.medium)
+                        .heightIn(min = 132.dp)
                 ) {
-                    Box(
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.White, shape = RoundedCornerShape(16.dp))
+                            .fillMaxSize()
+                            .padding(Spacing.large),
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(Spacing.medium)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Spacer(modifier = Modifier.height(4.dp))
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Top
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = stringResource(R.string.home_title),
-                                        style = MaterialTheme.typography.headlineMedium,
-                                        color = FlowpayOnSurface
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    Text(
-                                        text = stringResource(R.string.home_subtitle),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = FlowpayTextSecondary
-                                    )
-                                }
-
-                                // Settings Button
-                                Box(
-                                    modifier = Modifier
-                                        .size(Spacing.touchTarget)
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(Color.White)
-                                        .border(1.dp, FlowpayLightGray, RoundedCornerShape(12.dp))
-                                        .clickable(
-                                            indication = null,
-                                            interactionSource = remember { MutableInteractionSource() }
-                                        ) {
-                                            context.startActivity(Intent(context, SettingsActivity::class.java))
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Settings,
-                                        contentDescription = stringResource(R.string.settings_title),
-                                        tint = FlowpayOnSurface,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.home_title),
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = com.flowpay.app.ui.theme.WavePayOnBrand
+                                )
+                                Text(
+                                    text = stringResource(R.string.home_subtitle),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = com.flowpay.app.ui.theme.WavePayOnBrand
+                                )
                             }
-
-                            Spacer(modifier = Modifier.height(Spacing.medium))
-
-                            // Bank Info Section
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .heightIn(min = 64.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(FlowpaySurfaceDim)
-                                    .padding(horizontal = Spacing.medium, vertical = Spacing.small)
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxSize(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Column(
-                                        modifier = Modifier.weight(1f),
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.home_connected_bank),
-                                            fontSize = 12.sp,
-                                            color = FlowpayTextSecondary,
-                                            maxLines = 1
-                                        )
-                                        Spacer(modifier = Modifier.height(6.dp))
-                                        Text(
-                                            text = selectedBankName,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = FlowpayOnSurface,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-
-                                    Spacer(modifier = Modifier.width(12.dp))
-
-                                    Box(
-                                        modifier = Modifier
-                                            .size(Spacing.touchTarget)
-                                            .clip(CircleShape)
-                                            .background(FlowpayMediumGray),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.AccountBalanceWallet,
-                                            contentDescription = null,
-                                            tint = FlowpayAccent,
-                                            modifier = Modifier.size(26.dp)
-                                        )
-                                    }
+                            IconButton(
+                                onClick = {
+                                    context.startActivity(Intent(context, SettingsActivity::class.java))
                                 }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Settings,
+                                    contentDescription = stringResource(R.string.settings_title),
+                                    tint = com.flowpay.app.ui.theme.WavePayOnBrand
+                                )
                             }
                         }
                     }
                 }
 
                 Row(
-                    modifier = Modifier.padding(horizontal = Spacing.medium, vertical = Spacing.small),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Spacing.medium, vertical = Spacing.small),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.small),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.WifiOff,
-                        contentDescription = null,
-                        tint = FlowpayTextGray,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(Modifier.width(Spacing.small))
-                    Text(
-                        text = stringResource(R.string.home_works_offline),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = FlowpayTextGray
-                    )
+                    Surface(
+                        color = com.flowpay.app.ui.theme.WavePayBrandTint,
+                        shape = RoundedCornerShape(100.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = Spacing.compact, vertical = Spacing.small),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.WifiOff,
+                                contentDescription = null,
+                                tint = FlowpayAccent,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(Spacing.small))
+                            Text(
+                                text = stringResource(R.string.home_works_offline),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = FlowpayOnSurface
+                            )
+                        }
+                    }
+                    Surface(
+                        modifier = Modifier.weight(1f),
+                        color = com.flowpay.app.ui.theme.WavePaySurface,
+                        shape = RoundedCornerShape(100.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, FlowpayLightGray)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = Spacing.compact, vertical = Spacing.small),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AccountBalanceWallet,
+                                contentDescription = null,
+                                tint = FlowpayAccent,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(Spacing.small))
+                            Text(
+                                text = selectedBankName,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = FlowpayOnSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(Spacing.medium))
+
+                if (!setupCompleted || !isUssdReady || !isUpi123Ready) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Spacing.medium)
+                            .clickable(role = androidx.compose.ui.semantics.Role.Button) {
+                                context.startActivity(
+                                    Intent(context, TestConfigurationActivity::class.java)
+                                )
+                            }
+                    ) {
+                        InfoBanner(
+                            title = stringResource(R.string.home_finish_setup),
+                            message = stringResource(R.string.home_finish_setup_body)
+                        )
+                    }
+                }
 
                 PaymentActionButtons(
                     onQRScanClick = {
@@ -804,24 +769,24 @@ fun MainScreen(
                     onPayContactClick = {
                         requestPayContact()
                     },
-                    isUpi123Ready = isUpi123Ready,
-                    isUssdReady = isUssdReady,
+                    isUpi123Ready = isUpi123Ready && setupCompleted,
+                    isUssdReady = isUssdReady && setupCompleted,
                     isScanning = isScanning
                 )
 
                 if (recentPayees.isNotEmpty()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = Spacing.medium)
-                    ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = stringResource(R.string.home_recent_payees),
                             style = MaterialTheme.typography.titleMedium,
-                            color = FlowpayOnSurface
+                            color = FlowpayOnSurface,
+                            modifier = Modifier.padding(horizontal = Spacing.medium)
                         )
                         Spacer(Modifier.height(Spacing.small))
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(Spacing.small)) {
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = Spacing.medium),
+                            horizontalArrangement = Arrangement.spacedBy(Spacing.small)
+                        ) {
                             items(recentPayees) { payee ->
                                 val name = payee.recipientName
                                     ?.takeIf(String::isNotBlank)
@@ -830,26 +795,30 @@ fun MainScreen(
                                     modifier = Modifier
                                         .heightIn(min = Spacing.touchTarget)
                                         .clickable { requestPayContact(payee) },
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(12.dp),
+                                    color = com.flowpay.app.ui.theme.WavePaySurface,
+                                    shape = RoundedCornerShape(100.dp),
                                     border = androidx.compose.foundation.BorderStroke(
                                         1.dp,
                                         FlowpayLightGray
                                     )
                                 ) {
                                     Row(
-                                        modifier = Modifier.padding(
-                                            horizontal = Spacing.medium,
-                                            vertical = Spacing.small
-                                        ),
+                                        modifier = Modifier.padding(horizontal = Spacing.compact, vertical = Spacing.small),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Person,
-                                            contentDescription = null,
-                                            tint = FlowpayAccent,
-                                            modifier = Modifier.size(18.dp)
-                                        )
+                                        Box(
+                                            modifier = Modifier
+                                                .size(32.dp)
+                                                .clip(CircleShape)
+                                                .background(com.flowpay.app.ui.theme.WavePayBrandTint),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = payeeInitials(name),
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = FlowpayAccent
+                                            )
+                                        }
                                         Spacer(Modifier.width(Spacing.small))
                                         Text(
                                             text = name,
@@ -866,20 +835,11 @@ fun MainScreen(
 
                 Spacer(modifier = Modifier.height(Spacing.large))
 
-                // Recent Transactions
-                Card(
+                SectionCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                        .padding(horizontal = Spacing.medium)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(Spacing.medium)
-                            .border(0.dp, Color.Transparent, RoundedCornerShape(16.dp))
-                    ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -985,30 +945,13 @@ fun MainScreen(
                                         .padding(vertical = 32.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Box(
+                                    EmptyState(
+                                        title = stringResource(R.string.home_no_transactions),
+                                        body = stringResource(R.string.home_history_empty),
+                                        icon = Icons.Default.History,
                                         modifier = Modifier
-                                            .size(64.dp)
-                                            .background(FlowpayMediumGray, CircleShape),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.History,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(32.dp),
-                                            tint = FlowpayTextSecondary
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(20.dp))
-                                    Text(
-                                        text = stringResource(R.string.home_no_transactions),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = FlowpayOnSurface
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    Text(
-                                        text = stringResource(R.string.home_history_empty),
-                                        color = FlowpayTextSecondary,
-                                        textAlign = TextAlign.Center
+                                            .fillMaxWidth()
+                                            .padding(vertical = Spacing.large)
                                     )
                                 }
                             }
@@ -1103,6 +1046,7 @@ fun MainScreen(
 
 @Composable
 fun TransactionItem(payment: PaymentDetails, onClick: () -> Unit) {
+    val displayName = payment.recipientName?.takeIf(String::isNotBlank) ?: payment.phoneNumber
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -1119,6 +1063,20 @@ fun TransactionItem(payment: PaymentDetails, onClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Box(
+                modifier = Modifier
+                    .size(Spacing.touchTarget)
+                    .clip(CircleShape)
+                    .background(com.flowpay.app.ui.theme.WavePayBrandTint),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = payeeInitials(displayName),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = FlowpayAccent
+                )
+            }
+            Spacer(Modifier.width(Spacing.small))
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -1126,7 +1084,7 @@ fun TransactionItem(payment: PaymentDetails, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = payment.recipientName?.takeIf(String::isNotBlank) ?: payment.phoneNumber,
+                    text = displayName,
                     style = MaterialTheme.typography.titleSmall,
                     color = FlowpayOnSurface,
                     maxLines = 1,
@@ -1162,7 +1120,10 @@ private fun TransactionItemAmount(amount: Double, status: PaymentStatus) {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        StatusIndicator(status = status.name)
+        StatusChip(
+            status = status.name,
+            label = stringResource(com.flowpay.app.ui.activities.statusLabelRes(status.name))
+        )
     }
 }
 
@@ -1191,89 +1152,75 @@ fun PayContactDialog(
     ) { granted ->
         if (granted) showContactPicker = true
     }
+    val canTransfer = phoneNumber.length == 10 &&
+        amount.isNotEmpty() &&
+        amount != "0" &&
+        !isOverCap
 
-    AlertDialog(
+    ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = FlowpaySurface,
-        title = {
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = com.flowpay.app.ui.theme.WavePayCanvas,
+        contentColor = FlowpayOnSurface
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .padding(horizontal = Spacing.medium)
+                .padding(bottom = Spacing.large),
+            verticalArrangement = Arrangement.spacedBy(Spacing.medium)
+        ) {
             Text(
                 text = stringResource(R.string.home_pay_by_number),
-                color = FlowpayOnSurface,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.headlineSmall,
+                color = FlowpayOnSurface
             )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+
+            SectionCard(contentPadding = PaddingValues(Spacing.medium)) {
                 selectedContactName?.let { name ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = LocalFlowpayAccentTheme.current.accent.copy(alpha = 0.15f)
-                        ),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = null,
-                                tint = LocalFlowpayAccentTheme.current.accent,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(R.string.pay_contact_sending_to, name),
-                                color = LocalFlowpayAccentTheme.current.accent,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
+                    Text(
+                        text = stringResource(R.string.pay_contact_sending_to, name),
+                        color = LocalFlowpayAccentTheme.current.accent,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                    Spacer(Modifier.height(Spacing.small))
                 }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.Top
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.small),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedTextField(
                         value = phoneNumber,
                         onValueChange = {
-                            if (it.all { char -> char.isDigit() } && it.length <= 10) {
+                            if (it.all(Char::isDigit) && it.length <= 10) {
                                 phoneNumber = it
                                 selectedContactName = null
                             }
                         },
-                        label = {
-                            Text(stringResource(R.string.home_field_mobile_label), color = FlowpayTextSecondary)
-                        },
-                        placeholder = {
-                            Text(stringResource(R.string.home_field_mobile_hint), color = FlowpayTextGray)
-                        },
+                        label = { Text(stringResource(R.string.home_field_mobile_label)) },
+                        placeholder = { Text(stringResource(R.string.home_field_mobile_hint)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         modifier = Modifier.weight(1f),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = FlowpayOnSurface,
                             unfocusedTextColor = FlowpayOnSurface,
-                            focusedBorderColor = FlowpayOutlineGray,
+                            focusedBorderColor = com.flowpay.app.ui.theme.WavePayBrand,
                             unfocusedBorderColor = FlowpayLightGray,
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                            focusedContainerColor = com.flowpay.app.ui.theme.WavePaySurface,
+                            unfocusedContainerColor = com.flowpay.app.ui.theme.WavePaySurface
                         )
                     )
-
                     IconButton(
                         onClick = {
                             val pm = permissionManager
                             if (pm == null) {
                                 Toast.makeText(
                                     context.applicationContext,
-                                context.getString(R.string.contacts_picker_error),
+                                    context.getString(R.string.contacts_picker_error),
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 return@IconButton
@@ -1283,36 +1230,24 @@ fun PayContactDialog(
                             } else {
                                 showContactPermissionDialog = true
                             }
-                        },
-                        modifier = Modifier
-                            .padding(top = 8.dp)
-                            .size(48.dp)
-                            .background(
-                                color = LocalFlowpayAccentTheme.current.accent.copy(alpha = 0.2f),
-                                shape = RoundedCornerShape(8.dp)
-                            )
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.PermContactCalendar,
                             contentDescription = context.getString(R.string.home_select_contact),
-                            tint = LocalFlowpayAccentTheme.current.accent
+                            tint = com.flowpay.app.ui.theme.WavePayBrand
                         )
                     }
                 }
 
+                Spacer(Modifier.height(Spacing.small))
                 OutlinedTextField(
                     value = amount,
                     onValueChange = {
-                        if (it.all { char -> char.isDigit() } && it.length <= 6) {
-                            amount = it
-                        }
+                        if (it.all(Char::isDigit) && it.length <= 6) amount = it
                     },
-                    label = {
-                        Text(stringResource(R.string.home_field_amount_label), color = FlowpayTextSecondary)
-                    },
-                    placeholder = {
-                        Text(stringResource(R.string.home_field_amount_hint), color = FlowpayTextGray)
-                    },
+                    label = { Text(stringResource(R.string.home_field_amount_label)) },
+                    placeholder = { Text(stringResource(R.string.home_field_amount_hint)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
                     isError = isOverCap,
@@ -1320,49 +1255,42 @@ fun PayContactDialog(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = FlowpayOnSurface,
                         unfocusedTextColor = FlowpayOnSurface,
-                        focusedBorderColor = if (isOverCap) FlowpayStatusError else FlowpayOutlineGray,
+                        focusedBorderColor = if (isOverCap) FlowpayStatusError else com.flowpay.app.ui.theme.WavePayBrand,
                         unfocusedBorderColor = if (isOverCap) FlowpayStatusError else FlowpayLightGray,
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
+                        focusedContainerColor = com.flowpay.app.ui.theme.WavePaySurface,
+                        unfocusedContainerColor = com.flowpay.app.ui.theme.WavePaySurface
                     )
                 )
-
-                // Told here, in the dialog, while the number can still be
-                // corrected. The IVR itself only rejects an over-cap amount
-                // mid-call, after the user has already dialled.
+                Text(
+                    text = stringResource(
+                        R.string.home_limit_helper,
+                        CurrencyFormat.inr(AppConstants.UPI123PAY_MAX_AMOUNT)
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = FlowpayTextSecondary
+                )
                 if (isOverCap) {
                     Text(
                         text = Upi123CallStringBuilder.Reason.AMOUNT_ABOVE_CAP.messageFor(context),
                         color = FlowpayStatusError,
-                        fontSize = 12.sp,
-                        lineHeight = 16.sp
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }
-        },
-        confirmButton = {
-            val canTransfer = phoneNumber.length == 10 && amount.isNotEmpty() &&
-                amount != "0" && !isOverCap
-            TextButton(
+
+            PrimaryButton(
+                text = stringResource(R.string.action_transfer),
                 onClick = { onConfirm(phoneNumber, amount) },
-                enabled = canTransfer
-            ) {
-                Text(
-                    stringResource(R.string.action_transfer),
-                    color = if (canTransfer) {
-                        LocalFlowpayAccentTheme.current.accent
-                    } else {
-                        FlowpayTextGray
-                    }
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.action_cancel), color = FlowpayTextSecondary)
-            }
+                enabled = canTransfer,
+                modifier = Modifier.fillMaxWidth()
+            )
+            SecondaryButton(
+                text = stringResource(R.string.action_cancel),
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
-    )
+    }
 
     if (showContactPicker) {
         ContactPickerDialog(
@@ -1399,28 +1327,27 @@ fun PermissionExplanationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = FlowpaySurface,
+        shape = RoundedCornerShape(28.dp),
+        containerColor = WavePayCanvas,
         title = {
             Text(
                 text = title,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = FlowpayOnSurface
+                style = MaterialTheme.typography.titleLarge,
+                color = WavePayInk
             )
         },
         text = {
             Text(
                 text = message,
-                fontSize = 14.sp,
-                color = FlowpayTextPale,
-                lineHeight = 20.sp
+                style = MaterialTheme.typography.bodyLarge,
+                color = WavePaySecondaryText
             )
         },
         confirmButton = {
             TextButton(
                 onClick = onConfirm,
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = LocalFlowpayAccentTheme.current.accent
+                    contentColor = WavePayBrand
                 )
             ) {
                 Text(confirmButtonText)
@@ -1428,7 +1355,10 @@ fun PermissionExplanationDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.action_not_now), color = FlowpayTextSecondary)
+                Text(
+                    stringResource(R.string.action_not_now),
+                    color = WavePaySecondaryText
+                )
             }
         }
     )
@@ -1438,4 +1368,9 @@ fun PermissionExplanationDialog(
 fun formatDate(timestamp: Long): String {
     val formatter = SimpleDateFormat("dd MMM, HH:mm", Locale("en", "IN"))
     return formatter.format(Date(timestamp))
+}
+
+private fun payeeInitials(name: String): String {
+    val words = name.trim().split(Regex("\\s+")).filter(String::isNotEmpty)
+    return words.take(2).mapNotNull(String::firstOrNull).joinToString("").uppercase(Locale.getDefault())
 }

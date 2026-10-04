@@ -3,7 +3,6 @@
 
 package com.flowpay.app.ui.dialogs
 
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,7 +14,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.res.stringResource
@@ -26,12 +24,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.flowpay.app.R
-import com.flowpay.app.ui.theme.FlowpayAccentGreen
-import com.flowpay.app.ui.theme.FlowpaySurface
-import com.flowpay.app.ui.theme.FlowpayOnSurface
-import com.flowpay.app.ui.theme.FlowpayLightGray
-import com.flowpay.app.ui.theme.FlowpayTextGray
-import com.flowpay.app.ui.theme.FlowpayTextSecondary
+import com.flowpay.app.ui.theme.Spacing
+import com.flowpay.app.ui.theme.WavePayBrand
+import com.flowpay.app.ui.theme.WavePayBrandTint
+import com.flowpay.app.ui.theme.WavePayInk
+import com.flowpay.app.ui.theme.WavePayOnBrand
+import com.flowpay.app.ui.theme.WavePayOutline
+import com.flowpay.app.ui.theme.WavePaySecondaryText
+import com.flowpay.app.ui.theme.WavePaySurface
 import kotlinx.coroutines.delay
 
 @Composable
@@ -68,30 +68,19 @@ private fun Upi123ProgressDialogContent(
     onNotConfigured: () -> Unit = {},
     onDismiss: () -> Unit = {}
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.6f,
-        targetValue = 1.0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = EaseInOut),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "alpha"
-    )
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(32.dp),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = FlowpaySurface),
-        border = BorderStroke(1.dp, FlowpayLightGray)
+            .padding(Spacing.large),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = WavePaySurface),
+        border = BorderStroke(1.dp, WavePayOutline)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp)
+                    .padding(Spacing.large)
                     .padding(top = 4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -99,7 +88,7 @@ private fun Upi123ProgressDialogContent(
                     modifier = Modifier
                         .size(80.dp)
                         .background(
-                            color = FlowpayAccentGreen.copy(alpha = alpha * 0.2f),
+                            color = WavePayBrandTint,
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -107,7 +96,7 @@ private fun Upi123ProgressDialogContent(
                     Icon(
                         imageVector = UpiIcon,
                         contentDescription = stringResource(R.string.upi123_dlg_setup_icon_desc),
-                        tint = FlowpayAccentGreen,
+                        tint = WavePayBrand,
                         modifier = Modifier.size(48.dp)
                     )
                 }
@@ -120,9 +109,9 @@ private fun Upi123ProgressDialogContent(
                     } else {
                         stringResource(R.string.upi123_dlg_setting_up_title)
                     },
-                    fontSize = 24.sp,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = FlowpayOnSurface,
+                    color = WavePayInk,
                     textAlign = TextAlign.Center
                 )
 
@@ -134,9 +123,9 @@ private fun Upi123ProgressDialogContent(
                     } else {
                         stringResource(R.string.upi123_dlg_ivr_triggered_message)
                     },
-                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
-                    color = FlowpayTextSecondary,
+                    color = WavePaySecondaryText,
                     textAlign = TextAlign.Center,
                     lineHeight = 24.sp
                 )
@@ -146,23 +135,23 @@ private fun Upi123ProgressDialogContent(
                 if (showConfigurationOptions) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.small)
                     ) {
                         Button(
                             onClick = onNotConfigured,
                             modifier = Modifier
                                 .weight(1f)
-                                .height(50.dp),
-                            shape = RoundedCornerShape(15.dp),
+                                .height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = FlowpayLightGray
+                                containerColor = WavePayBrandTint
                             )
                         ) {
                             Text(
                                 text = stringResource(R.string.upi123_dlg_not_yet),
-                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.SemiBold,
-                                color = FlowpayOnSurface,
+                                color = WavePayBrand,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -171,17 +160,17 @@ private fun Upi123ProgressDialogContent(
                             onClick = onConfigured,
                             modifier = Modifier
                                 .weight(1f)
-                                .height(50.dp),
-                            shape = RoundedCornerShape(15.dp),
+                                .height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = FlowpayAccentGreen
+                                containerColor = WavePayBrand
                             )
                         ) {
                             Text(
                                 text = stringResource(R.string.upi123_dlg_yes),
-                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color.White,
+                                color = WavePayOnBrand,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -191,17 +180,16 @@ private fun Upi123ProgressDialogContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(6.dp),
-                        color = FlowpayAccentGreen,
-                        trackColor = FlowpayLightGray
+                        color = WavePayBrand,
+                        trackColor = WavePayOutline
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
                         text = stringResource(R.string.upi123_dlg_configuring),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Light,
-                        color = FlowpayTextGray.copy(alpha = alpha),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = WavePaySecondaryText,
                         textAlign = TextAlign.Center
                     )
 
@@ -220,16 +208,16 @@ private fun Upi123ProgressDialogContent(
                             onClick = onConfigured,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp),
-                            shape = RoundedCornerShape(15.dp),
-                            border = BorderStroke(1.dp, FlowpayAccentGreen),
+                                .height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, WavePayBrand),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = FlowpayAccentGreen
+                                contentColor = WavePayBrand
                             )
                         ) {
                             Text(
                                 text = stringResource(R.string.upi123_dlg_already_set_up),
-                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center
                             )
@@ -242,13 +230,12 @@ private fun Upi123ProgressDialogContent(
                 onClick = onDismiss,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(4.dp)
-                    .size(40.dp)
+                    .size(48.dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = stringResource(R.string.upi123_dlg_close),
-                    tint = FlowpayTextSecondary,
+                    tint = WavePaySecondaryText,
                     modifier = Modifier.size(22.dp)
                 )
             }
@@ -267,7 +254,7 @@ val UpiIcon: ImageVector
             viewportHeight = 24f
         ).apply {
             path(
-                fill = androidx.compose.ui.graphics.SolidColor(FlowpayAccentGreen),
+                fill = androidx.compose.ui.graphics.SolidColor(WavePayBrand),
                 fillAlpha = 1f,
                 stroke = null,
                 strokeAlpha = 1f,

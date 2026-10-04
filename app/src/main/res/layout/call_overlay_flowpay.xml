@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/frosted_glass_background"
+        android:background="@drawable/white_card_bg"
         android:elevation="16dp"
         android:minHeight="320dp"
         android:clickable="true"
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@drawable/success_badge_bg"
+                android:background="@drawable/muted_pill_bg"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
             android:layout_marginTop="12dp"
@@ -55,7 +55,7 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_check_circle"
-                android:tint="@color/flowpay_green"
+                android:tint="@color/wavepay_brand"
                 android:importantForAccessibility="no" />
             
             <TextView
@@ -64,7 +64,7 @@
                 android:text="@string/overlay_secure_transfer"
                 android:textSize="13sp"
                 android:textStyle="normal"
-                android:textColor="@color/flowpay_green"
+                android:textColor="@color/wavepay_brand"
                 android:layout_marginStart="6dp" />
         </LinearLayout>
 
@@ -118,7 +118,7 @@
                 tools:text="0%"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="@color/flowpay_green"
+                android:textColor="@color/wavepay_brand"
                 android:layout_gravity="center" />
         </FrameLayout>
 
@@ -208,6 +208,48 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Call guidance, shown with the status and payment details. -->
+        <LinearLayout
+            android:id="@+id/paymentSteps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/white_card_bg"
+            android:padding="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginHorizontal="32dp"
+            app:layout_constraintTop_toBottomOf="@id/detailsCard">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/call_step_follow_prompts"
+                android:textSize="13sp"
+                android:textColor="@color/overlay_text_primary" />
+
+            <TextView
+                android:id="@+id/pinNotice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/muted_pill_bg"
+                android:padding="12dp"
+                android:text="@string/overlay_pin_notice"
+                android:textColor="@color/wavepay_brand_pressed"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textSize="13sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/call_step_wait"
+                android:textSize="13sp"
+                android:textColor="@color/overlay_text_primary" />
+        </LinearLayout>
+
         <!-- Volume-lowered indicator. Hidden until the volume change actually
              succeeds (shown from CallOverlayService), so the label never claims
              something that didn't happen. -->
@@ -221,7 +263,7 @@
             android:paddingHorizontal="16dp"
             android:paddingVertical="8dp"
             android:layout_marginTop="20dp"
-            app:layout_constraintTop_toBottomOf="@id/detailsCard"
+            app:layout_constraintTop_toBottomOf="@id/paymentSteps"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
             
@@ -247,14 +289,14 @@
         <Button
             android:id="@+id/terminateButton"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="56dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/terminate_button_bg"
             android:text="@string/overlay_terminate"
             android:textColor="@color/white"
             android:textAllCaps="false"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:drawableStart="@drawable/ic_phone_hangup"
             android:drawablePadding="6dp"

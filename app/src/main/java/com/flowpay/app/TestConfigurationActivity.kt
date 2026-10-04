@@ -25,6 +25,7 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -190,7 +191,7 @@ fun TestConfigurationScreen(testHelper: TestConfigurationHelper) {
     var showUpi123ConfigurationOptions by remember { mutableStateOf(testStates.showUpi123ConfigurationOptions) }
     var ussdProgressMessage by remember { mutableStateOf(testStates.ussdProgressMessage) }
     var showCallCompleteButton by remember { mutableStateOf(testStates.showCallCompleteButton) }
-    var currentTestStep by remember { mutableStateOf(0) }
+    var currentTestStep by rememberSaveable { mutableStateOf(0) }
     val isJioSim = !SetupHelper.isPrimarySimUssdCapable(context)
     val userReportedUssdIssue = SetupHelper.hasUserReportedUssdNotWorking(context)
 

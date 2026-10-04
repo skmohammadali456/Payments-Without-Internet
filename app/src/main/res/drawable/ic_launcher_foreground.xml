@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Adaptive icon 108×108 dp; 12dp inset → 84×84 dp wordmark (large; edges may clip on circular/squircle masks). -->
-<inset xmlns:android="http://schemas.android.com/apk/res/android"
-    android:insetLeft="12dp"
-    android:insetTop="12dp"
-    android:insetRight="12dp"
-    android:insetBottom="12dp"
-    android:drawable="@drawable/ic_wavepay_wordmark" />
+<!-- The 62dp mark stays inside Android's 66dp adaptive-icon safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/white"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M23,60 C34,46 41,43 51,52 C61,62 69,63 85,44" />
+</vector>

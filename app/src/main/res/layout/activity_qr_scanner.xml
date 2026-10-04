@@ -25,8 +25,8 @@
         app:layout_constraintVertical_bias="0.42">
 
         <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_gravity="top|start"
             android:rotation="0"
             android:src="@drawable/qr_corner"
@@ -81,8 +81,8 @@
 
         <ImageButton
             android:id="@+id/btnFlash"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@drawable/bottom_action_button_bg"
             android:src="@drawable/ic_flash_off"
             android:scaleType="centerInside"
@@ -90,13 +90,13 @@
             android:contentDescription="@string/qr_torch"
             app:tint="@color/text_primary_light" />
 
-        <!-- Same 64dp box, same background and padding as the torch so the
+        <!-- Same 56dp box, same background and padding as the torch so the
              pair reads as one symmetric group centred on the screen. -->
         <ImageButton
             android:id="@+id/btnGallery"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="28dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="20dp"
             android:background="@drawable/bottom_action_button_bg"
             android:src="@drawable/ic_gallery"
             android:scaleType="centerInside"
@@ -221,6 +221,7 @@
         android:background="@drawable/scan_error_banner_bg"
         android:textColor="@color/error_red"
         android:textSize="14sp"
+        android:textStyle="bold"
         android:lineSpacingExtra="2dp"
         android:padding="16dp"
         android:gravity="center"

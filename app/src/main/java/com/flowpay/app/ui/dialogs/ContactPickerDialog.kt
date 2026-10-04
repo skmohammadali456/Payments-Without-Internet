@@ -23,19 +23,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.flowpay.app.R
-import com.flowpay.app.ui.theme.FlowpaySurface
 import com.flowpay.app.ui.theme.FlowpayLightGray
-import com.flowpay.app.ui.theme.FlowpayMediumGray
-import com.flowpay.app.ui.theme.FlowpayOutlineGray
 import com.flowpay.app.ui.theme.FlowpayTextGray
 import com.flowpay.app.ui.theme.FlowpayTextSecondary
 import com.flowpay.app.ui.theme.FlowpayOnSurface
-import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
+import com.flowpay.app.ui.theme.WavePayBrand
+import com.flowpay.app.ui.theme.WavePayBrandTint
+import com.flowpay.app.ui.theme.WavePayCanvas
+import com.flowpay.app.ui.theme.WavePaySurface
+import com.flowpay.app.ui.theme.Spacing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -50,7 +52,7 @@ data class Contact(
 
 /**
  * Contact picker dialog that displays a searchable list of contacts
- * Uses Flowpay's dark theme styling
+ * Uses Flowpay's light theme styling
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,8 +99,9 @@ fun ContactPickerDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        modifier = Modifier.fillMaxHeight(0.8f),
-        containerColor = FlowpaySurface,
+        modifier = Modifier.fillMaxHeight(0.86f),
+        shape = RoundedCornerShape(24.dp),
+        containerColor = WavePayCanvas,
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -108,8 +111,7 @@ fun ContactPickerDialog(
                 Text(
                     stringResource(R.string.contact_picker_title),
                     color = FlowpayOnSurface,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineSmall
                 )
                 IconButton(onClick = onDismiss) {
                     Icon(
@@ -130,7 +132,7 @@ fun ContactPickerDialog(
                     onValueChange = { searchQuery = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                        .padding(bottom = 12.dp),
                     placeholder = {
                         Text(stringResource(R.string.contacts_search_hint), color = FlowpayTextGray)
                     },
@@ -144,11 +146,11 @@ fun ContactPickerDialog(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = FlowpayOnSurface,
                         unfocusedTextColor = FlowpayOnSurface,
-                        focusedBorderColor = FlowpayOutlineGray,
+                        focusedBorderColor = WavePayBrand,
                         unfocusedBorderColor = FlowpayLightGray,
-                        cursorColor = LocalFlowpayAccentTheme.current.accent,
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
+                        cursorColor = WavePayBrand,
+                        focusedContainerColor = WavePaySurface,
+                        unfocusedContainerColor = WavePaySurface
                     ),
                     singleLine = true
                 )
@@ -161,7 +163,7 @@ fun ContactPickerDialog(
                             .height(300.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(color = LocalFlowpayAccentTheme.current.accent)
+                        CircularProgressIndicator(color = WavePayBrand)
                     }
                 } else if (filteredContacts.isEmpty()) {
                     Box(
@@ -218,32 +220,29 @@ fun ContactItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(8.dp),
+            .clickable(role = Role.Button, onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = FlowpayMediumGray
+            containerColor = WavePaySurface
         )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Contact icon
             Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        color = LocalFlowpayAccentTheme.current.accent.copy(alpha = 0.2f),
-                        shape = RoundedCornerShape(20.dp)
-                    ),
+                    .size(Spacing.touchTarget)
+                    .background(WavePayBrandTint, shape = androidx.compose.foundation.shape.CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = null,
-                    tint = LocalFlowpayAccentTheme.current.accent,
+                    tint = WavePayBrand,
                     modifier = Modifier.size(24.dp)
                 )
             }
