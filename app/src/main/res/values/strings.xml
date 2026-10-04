@@ -303,6 +303,10 @@
 
     <!-- Setup screen -->
     <string name="setup_step_1_of_2">Step 1 of 2</string>
+    <string name="setup_onboarding_step">Step %1$d of 6</string>
+    <string name="setup_welcome_intro">Set up your bank and SIM, then check that your payment options are ready.</string>
+    <string name="setup_permission_timing">WavePay asks for access only when a call or payment feature needs it.</string>
+    <string name="setup_get_started">Get started</string>
     <string name="setup_select_bank">Select Bank</string>
     <string name="setup_choose_your_bank">Choose your bank</string>
     <string name="setup_primary_sim">Primary SIM</string>
@@ -328,7 +332,12 @@
     <string name="testcfg_call_consent_body">This places a real call to your carrier\'s *99# / UPI 123 service to check setup on your SIM. Standard call or USSD charges from your operator may apply.</string>
     <string name="testcfg_header_icon_desc">Test</string>
     <string name="testcfg_title">Test Configuration</string>
-    <string name="testcfg_step">Step 2 of 2</string>
+    <string name="testcfg_step">Step 6 of 6</string>
+    <string name="testcfg_substep">Test %1$d of 2</string>
+    <string name="testcfg_step_ussd_title">Test *99# USSD</string>
+    <string name="testcfg_step_upi123_title">Test UPI 123PAY</string>
+    <string name="testcfg_next_upi123">Next: UPI 123PAY</string>
+    <string name="testcfg_back_to_ussd">Back to USSD</string>
     <string name="testcfg_intro">Complete these tests to verify your payment methods work correctly</string>
     <string name="testcfg_instructions_title">Configure Payment Methods</string>
     <string name="testcfg_instructions_body">We\'ll test both scanning and manual payment methods to ensure everything works smoothly</string>

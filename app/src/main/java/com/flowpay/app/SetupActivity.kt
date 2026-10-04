@@ -9,50 +9,44 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.AccountBalanceWallet
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.SimCard
-import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.rounded.AccountBalance
+import androidx.compose.material.icons.rounded.AccountBalanceWallet
+import androidx.compose.material.icons.rounded.Call
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.SimCard
+import androidx.compose.material.icons.rounded.Sms
 import androidx.compose.material3.*
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.*
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.flowpay.app.helpers.SetupHelper
-import com.flowpay.app.ui.theme.BlueAccentTheme
-import com.flowpay.app.ui.theme.FlowpayAccent
-import com.flowpay.app.ui.theme.FlowpaySurface
-import com.flowpay.app.ui.theme.FlowpayDisabledGray
-import com.flowpay.app.ui.theme.FlowpayLightGray
-import com.flowpay.app.ui.theme.FlowpayMediumGray
-import com.flowpay.app.ui.theme.FlowpaySurfaceDim
-import com.flowpay.app.ui.theme.FlowpayTextSecondary
-import com.flowpay.app.ui.theme.FlowpayOnSurface
+import com.flowpay.app.ui.components.InfoBanner
+import com.flowpay.app.ui.components.InfoBannerTone
+import com.flowpay.app.ui.components.PrimaryButton
+import com.flowpay.app.ui.components.SectionCard
+import com.flowpay.app.ui.components.SecondaryButton
+import com.flowpay.app.ui.components.WaveHeader
+import com.flowpay.app.ui.theme.Spacing
+import com.flowpay.app.ui.theme.WavePayCanvas
 import com.flowpay.app.ui.theme.FlowpayTheme
-import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
+import com.flowpay.app.ui.theme.WavePayBrand
+import com.flowpay.app.ui.theme.WavePayBrandTint
+import com.flowpay.app.ui.theme.WavePayInk
+import com.flowpay.app.ui.theme.WavePayOnBrand
+import com.flowpay.app.ui.theme.WavePayOutline
+import com.flowpay.app.ui.theme.WavePaySecondaryText
+import com.flowpay.app.ui.theme.WavePaySurface
 
 class SetupActivity : ComponentActivity() {
     private lateinit var setupHelper: SetupHelper
@@ -80,10 +74,8 @@ class SetupActivity : ComponentActivity() {
         // Edge-to-edge: Compose insets are the single source of padding (see MainActivity).
         androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            CompositionLocalProvider(LocalFlowpayAccentTheme provides BlueAccentTheme) {
-                FlowpayTheme {
-                    SetupScreen(setupHelper = setupHelper)
-                }
+            FlowpayTheme {
+                SetupScreen(setupHelper = setupHelper)
             }
         }
     }
@@ -97,226 +89,239 @@ fun SetupScreen(setupHelper: SetupHelper) {
     var selectedSecondarySim by remember { mutableStateOf("") }
     var isDualSimEnabled by remember { mutableStateOf(false) }
     var disclaimerAccepted by remember { mutableStateOf(false) }
+    var currentPage by remember { mutableStateOf(0) }
 
-    // Use helper methods for data
     val banks = setupHelper.getBanks()
     val simCarriers = setupHelper.getSimCarriers()
     val secondarySimOptions = setupHelper.getSecondarySimOptions(selectedPrimarySim)
+    val bankAndSimComplete = selectedBank.isNotBlank() &&
+        selectedPrimarySim.isNotBlank() &&
+        (!isDualSimEnabled || selectedSecondarySim.isNotBlank())
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(FlowpaySurfaceDim)
+            .background(WavePayCanvas)
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .widthIn(max = 420.dp)
-                .align(Alignment.Center)
-                // Insets must sit outside verticalScroll so they pad the
-                // viewport, not the scrolling content — otherwise the nav bar
-                // overlays the content at every offset but the very bottom.
+                .align(Alignment.TopCenter)
+                .widthIn(max = 520.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
                 .statusBarsPadding()
                 .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(horizontal = Spacing.medium, vertical = Spacing.large),
+            verticalArrangement = Arrangement.spacedBy(Spacing.medium)
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Header Card
-            HeaderCard()
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Bank Selection Section
-            BankSelectionSection(
-                banks = banks,
-                selectedBank = selectedBank,
-                onBankSelected = { selectedBank = it }
+            Text(
+                text = stringResource(R.string.setup_onboarding_step, currentPage + 1),
+                style = MaterialTheme.typography.labelLarge,
+                color = WavePaySecondaryText
             )
+            OnboardingProgress(activeStep = currentPage + 1)
 
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // SIM Card Selection Section
-            SimCardSelectionSection(
-                simCarriers = simCarriers,
-                selectedPrimarySim = selectedPrimarySim,
-                selectedSecondarySim = selectedSecondarySim,
-                isDualSimEnabled = isDualSimEnabled,
-                onPrimarySimSelected = { selectedPrimarySim = it },
-                onSecondarySimSelected = { selectedSecondarySim = it },
-                onDualSimToggled = { isDualSimEnabled = it },
-                secondarySimOptions = secondarySimOptions
-            )
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // Disclaimer Section
-            DisclaimerSection(
-                isAccepted = disclaimerAccepted,
-                onAcceptedChange = { disclaimerAccepted = it }
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // All form fields must be answered before the user can continue
-            val isFormComplete = selectedBank.isNotBlank() &&
-                selectedPrimarySim.isNotBlank() &&
-                (!isDualSimEnabled || selectedSecondarySim.isNotBlank()) &&
-                disclaimerAccepted
-
-            // Complete Setup Button
-            CompleteSetupButton(
-                enabled = isFormComplete,
-                onCompleteSetup = {
-                    val setupData = SetupHelper.SetupData(
+            when (currentPage) {
+                0 -> HeaderCard()
+                1 -> PermissionInfoPage(
+                    title = stringResource(R.string.setup_permission_phone_title),
+                    reason = stringResource(R.string.setup_permission_phone_reason),
+                    icon = Icons.Rounded.Call
+                )
+                2 -> PermissionInfoPage(
+                    title = stringResource(R.string.setup_permission_sms_title),
+                    reason = stringResource(R.string.setup_permission_sms_reason),
+                    icon = Icons.Rounded.Sms
+                )
+                3 -> {
+                    BankSelectionSection(
+                        banks = banks,
                         selectedBank = selectedBank,
-                        selectedPrimarySim = selectedPrimarySim,
-                        isDualSimEnabled = isDualSimEnabled,
-                        selectedSecondarySim = selectedSecondarySim,
-                        disclaimerAccepted = disclaimerAccepted
+                        onBankSelected = { selectedBank = it }
                     )
-                    setupHelper.completeSetup(setupData)
+                    SimCardSelectionSection(
+                        simCarriers = simCarriers,
+                        selectedPrimarySim = selectedPrimarySim,
+                        selectedSecondarySim = selectedSecondarySim,
+                        isDualSimEnabled = isDualSimEnabled,
+                        onPrimarySimSelected = { selectedPrimarySim = it },
+                        onSecondarySimSelected = { selectedSecondarySim = it },
+                        onDualSimToggled = { isDualSimEnabled = it },
+                        secondarySimOptions = secondarySimOptions
+                    )
                 }
-            )
+                else -> DisclaimerSection(
+                    isAccepted = disclaimerAccepted,
+                    onAcceptedChange = { disclaimerAccepted = it }
+                )
+            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            if (currentPage > 0) {
+                SecondaryButton(
+                    text = stringResource(R.string.testcfg_back),
+                    onClick = { currentPage -= 1 },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            val canContinue = when (currentPage) {
+                3 -> bankAndSimComplete
+                4 -> bankAndSimComplete && disclaimerAccepted
+                else -> true
+            }
+            PrimaryButton(
+                text = stringResource(
+                    when (currentPage) {
+                        0 -> R.string.setup_get_started
+                        4 -> R.string.complete_setup
+                        else -> R.string.setup_permission_continue
+                    }
+                ),
+                onClick = {
+                    if (currentPage < 4) {
+                        currentPage += 1
+                    } else {
+                        setupHelper.completeSetup(
+                            SetupHelper.SetupData(
+                                selectedBank = selectedBank,
+                                selectedPrimarySim = selectedPrimarySim,
+                                isDualSimEnabled = isDualSimEnabled,
+                                selectedSecondarySim = selectedSecondarySim,
+                                disclaimerAccepted = disclaimerAccepted
+                            )
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = canContinue
+            )
         }
+    }
+}
+
+@Composable
+private fun OnboardingProgress(activeStep: Int) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.tiny)
+    ) {
+        repeat(6) { step ->
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(4.dp)
+                    .background(
+                        color = if (step < activeStep) WavePayBrand else WavePayOutline,
+                        shape = CircleShape
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+private fun PermissionInfoPage(
+    title: String,
+    reason: String,
+    icon: ImageVector
+) {
+    SectionCard {
+        Row(
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(Spacing.medium)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(WavePayBrandTint, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = WavePayBrand,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Spacing.small)
+            ) {
+                Text(title, style = MaterialTheme.typography.titleLarge, color = WavePayInk)
+                Text(reason, style = MaterialTheme.typography.bodyLarge, color = WavePaySecondaryText)
+            }
+        }
+        Spacer(Modifier.height(Spacing.medium))
+        InfoBanner(
+            message = stringResource(R.string.setup_permission_timing),
+            tone = InfoBannerTone.NEUTRAL
+        )
     }
 }
 
 @Composable
 fun HeaderCard() {
-    val accent = LocalFlowpayAccentTheme.current
-    val headerShape = RoundedCornerShape(20.dp)
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(
-                elevation = 8.dp,
-                shape = headerShape,
-                ambientColor = Color.Black.copy(alpha = 0.15f),
-                spotColor = Color.Black.copy(alpha = 0.15f)
-            ),
-        shape = headerShape,
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
-        Box(
+    WaveHeader(modifier = Modifier.fillMaxWidth()) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White, shape = headerShape)
+                .padding(Spacing.large),
+            verticalArrangement = Arrangement.spacedBy(Spacing.medium)
         ) {
-            Column(
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
+                    .size(48.dp)
+                    .background(WavePayOnBrand.copy(alpha = 0.18f), CircleShape),
+                contentAlignment = Alignment.Center
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Icon in frosted circle
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp)
-                            .background(
-                                color = FlowpayMediumGray,
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountBalanceWallet,
-                            contentDescription = null,
-                            tint = FlowpayAccent,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(14.dp))
-
-                    Column {
-                        Text(
-                            text = stringResource(R.string.setup_flowpay),
-                            style = TextStyle(
-                                color = FlowpayOnSurface,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 0.3.sp,
-                                shadow = Shadow(
-                                    color = Color.Black.copy(alpha = 0.15f),
-                                    offset = Offset(0f, 2f),
-                                    blurRadius = 6f
-                                )
-                            )
-                        )
-                        Text(
-                            text = stringResource(R.string.setup_step_1_of_2),
-                            fontSize = 14.sp,
-                            color = FlowpayTextSecondary,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = stringResource(R.string.configure_upi_payments),
-                    fontSize = 15.sp,
-                    color = FlowpayTextSecondary,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 22.sp
+                Icon(
+                    imageVector = Icons.Rounded.AccountBalanceWallet,
+                    contentDescription = null,
+                    tint = WavePayOnBrand,
+                    modifier = Modifier.size(24.dp)
                 )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ProgressDot(isActive = true)
-                    ProgressDot(isActive = false)
-                }
             }
+            Text(
+                text = stringResource(R.string.setup_flowpay),
+                style = MaterialTheme.typography.headlineLarge,
+                color = WavePayOnBrand
+            )
+            Text(
+                text = stringResource(R.string.setup_welcome_intro),
+                style = MaterialTheme.typography.bodyLarge,
+                color = WavePayOnBrand
+            )
         }
     }
 }
 
-/**
- * Shared section-header pattern from MainScreen/Settings: small accent-tinted
- * circle icon, 16sp title, 12sp gray subtitle.
- */
 @Composable
 private fun SetupSectionHeader(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     title: String,
     subtitle: String
 ) {
-    val accent = LocalFlowpayAccentTheme.current
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Spacing.medium)
+    ) {
         Box(
             modifier = Modifier
-                .size(36.dp)
-                .background(accent.primary.copy(alpha = 0.12f), CircleShape),
+                .size(40.dp)
+                .background(WavePayBrandTint, CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = accent.primary,
+                tint = WavePayBrand,
                 modifier = Modifier.size(20.dp)
             )
         }
-        Spacer(modifier = Modifier.width(12.dp))
         Column {
-            Text(
-                text = title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = FlowpayOnSurface
-            )
-            Text(
-                text = subtitle,
-                fontSize = 12.sp,
-                color = FlowpayTextSecondary
-            )
+            Text(title, style = MaterialTheme.typography.titleMedium, color = WavePayInk)
+            Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = WavePaySecondaryText)
         }
     }
 }
@@ -325,10 +330,9 @@ private fun SetupSectionHeader(
 private fun SetupFieldLabel(text: String) {
     Text(
         text = text,
-        fontSize = 13.sp,
-        fontWeight = FontWeight.Medium,
-        color = FlowpayTextSecondary,
-        modifier = Modifier.padding(bottom = 8.dp)
+        style = MaterialTheme.typography.labelLarge,
+        color = WavePaySecondaryText,
+        modifier = Modifier.padding(bottom = Spacing.small)
     )
 }
 
@@ -339,14 +343,9 @@ fun BankSelectionSection(
     selectedBank: String,
     onBankSelected: (String) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(FlowpaySurfaceDim, RoundedCornerShape(20.dp))
-            .padding(18.dp)
-    ) {
+    SectionCard {
         SetupSectionHeader(
-            icon = Icons.Default.AccountBalance,
+            icon = Icons.Rounded.AccountBalance,
             title = stringResource(R.string.bank_selection),
             subtitle = stringResource(R.string.choose_primary_bank)
         )
@@ -373,38 +372,38 @@ fun BankSelectionSection(
                     .fillMaxWidth()
                     .menuAnchor(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = FlowpayDisabledGray,
-                    unfocusedBorderColor = FlowpayLightGray,
-                    focusedContainerColor = FlowpayMediumGray,
-                    unfocusedContainerColor = FlowpaySurface,
-                    focusedTextColor = FlowpayOnSurface,
-                    unfocusedTextColor = FlowpayOnSurface,
-                    focusedTrailingIconColor = FlowpayTextSecondary,
-                    unfocusedTrailingIconColor = FlowpayTextSecondary
+                    focusedBorderColor = WavePayBrand,
+                    unfocusedBorderColor = WavePayOutline,
+                    focusedContainerColor = WavePaySurface,
+                    unfocusedContainerColor = WavePaySurface,
+                    focusedTextColor = WavePayInk,
+                    unfocusedTextColor = WavePayInk,
+                    focusedTrailingIconColor = WavePaySecondaryText,
+                    unfocusedTrailingIconColor = WavePaySecondaryText
                 ),
-                shape = RoundedCornerShape(12.dp),
-                textStyle = TextStyle(fontSize = 15.sp),
+                shape = MaterialTheme.shapes.medium,
+                textStyle = MaterialTheme.typography.bodyLarge,
             )
 
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.background(FlowpayMediumGray)
+                modifier = Modifier.background(WavePaySurface)
             ) {
                 banks.forEach { (value, label) ->
                     DropdownMenuItem(
                         text = {
                             Text(
                                 label,
-                                color = FlowpayOnSurface,
-                                fontSize = 15.sp
+                                color = WavePayInk,
+                                style = MaterialTheme.typography.bodyLarge
                             )
                         },
                         onClick = {
                             onBankSelected(value)
                             expanded = false
                         },
-                        modifier = Modifier.background(FlowpayMediumGray)
+                        modifier = Modifier.background(WavePaySurface)
                     )
                 }
             }
@@ -424,16 +423,9 @@ fun SimCardSelectionSection(
     onDualSimToggled: (Boolean) -> Unit,
     secondarySimOptions: List<Pair<String, String>>
 ) {
-    val accent = LocalFlowpayAccentTheme.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(FlowpaySurfaceDim, RoundedCornerShape(20.dp))
-            .padding(18.dp)
-    ) {
+    SectionCard {
         SetupSectionHeader(
-            icon = Icons.Default.SimCard,
+            icon = Icons.Rounded.SimCard,
             title = stringResource(R.string.sim_card_selection),
             subtitle = stringResource(R.string.configure_sim_cards)
         )
@@ -461,38 +453,38 @@ fun SimCardSelectionSection(
                     .fillMaxWidth()
                     .menuAnchor(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = FlowpayDisabledGray,
-                    unfocusedBorderColor = FlowpayLightGray,
-                    focusedContainerColor = FlowpayMediumGray,
-                    unfocusedContainerColor = FlowpaySurface,
-                    focusedTextColor = FlowpayOnSurface,
-                    unfocusedTextColor = FlowpayOnSurface,
-                    focusedTrailingIconColor = FlowpayTextSecondary,
-                    unfocusedTrailingIconColor = FlowpayTextSecondary
+                    focusedBorderColor = WavePayBrand,
+                    unfocusedBorderColor = WavePayOutline,
+                    focusedContainerColor = WavePaySurface,
+                    unfocusedContainerColor = WavePaySurface,
+                    focusedTextColor = WavePayInk,
+                    unfocusedTextColor = WavePayInk,
+                    focusedTrailingIconColor = WavePaySecondaryText,
+                    unfocusedTrailingIconColor = WavePaySecondaryText
                 ),
-                shape = RoundedCornerShape(12.dp),
-                textStyle = TextStyle(fontSize = 15.sp),
+                shape = MaterialTheme.shapes.medium,
+                textStyle = MaterialTheme.typography.bodyLarge,
             )
 
             ExposedDropdownMenu(
                 expanded = primaryExpanded,
                 onDismissRequest = { primaryExpanded = false },
-                modifier = Modifier.background(FlowpayMediumGray)
+                modifier = Modifier.background(WavePaySurface)
             ) {
                 simCarriers.forEach { (value, label) ->
                     DropdownMenuItem(
                         text = {
                             Text(
                                 label,
-                                color = FlowpayOnSurface,
-                                fontSize = 15.sp
+                                color = WavePayInk,
+                                style = MaterialTheme.typography.bodyLarge
                             )
                         },
                         onClick = {
                             onPrimarySimSelected(value)
                             primaryExpanded = false
                         },
-                        modifier = Modifier.background(FlowpayMediumGray)
+                        modifier = Modifier.background(WavePaySurface)
                     )
                 }
             }
@@ -504,42 +496,26 @@ fun SimCardSelectionSection(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { onDualSimToggled(!isDualSimEnabled) },
+                .heightIn(min = Spacing.touchTarget)
+                .toggleable(
+                    value = isDualSimEnabled,
+                    role = Role.Checkbox,
+                    onValueChange = onDualSimToggled
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(22.dp)
-                    .border(
-                        width = 2.dp,
-                        color = if (isDualSimEnabled) accent.accent else FlowpayDisabledGray,
-                        shape = CircleShape
-                    )
-                    .background(
-                        color = if (isDualSimEnabled) accent.accent else Color.Transparent,
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                if (isDualSimEnabled) {
-                    Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .background(Color.White, CircleShape)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
+            Checkbox(
+                checked = isDualSimEnabled,
+                onCheckedChange = null,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = WavePayBrand,
+                    uncheckedColor = WavePayOutline
+                )
+            )
             Text(
                 text = stringResource(R.string.enable_dual_sim),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                color = FlowpayOnSurface
+                style = MaterialTheme.typography.bodyLarge,
+                color = WavePayInk
             )
         }
 
@@ -548,8 +524,8 @@ fun SimCardSelectionSection(
             Spacer(modifier = Modifier.height(16.dp))
 
             HorizontalDivider(
-                color = FlowpayMediumGray,
-                thickness = 0.5.dp
+                color = WavePayOutline,
+                thickness = 1.dp
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -575,38 +551,38 @@ fun SimCardSelectionSection(
                         .fillMaxWidth()
                         .menuAnchor(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = FlowpayDisabledGray,
-                        unfocusedBorderColor = FlowpayLightGray,
-                        focusedContainerColor = FlowpayMediumGray,
-                        unfocusedContainerColor = FlowpaySurface,
-                        focusedTextColor = FlowpayOnSurface,
-                        unfocusedTextColor = FlowpayOnSurface,
-                        focusedTrailingIconColor = FlowpayTextSecondary,
-                        unfocusedTrailingIconColor = FlowpayTextSecondary
+                        focusedBorderColor = WavePayBrand,
+                        unfocusedBorderColor = WavePayOutline,
+                        focusedContainerColor = WavePaySurface,
+                        unfocusedContainerColor = WavePaySurface,
+                        focusedTextColor = WavePayInk,
+                        unfocusedTextColor = WavePayInk,
+                        focusedTrailingIconColor = WavePaySecondaryText,
+                        unfocusedTrailingIconColor = WavePaySecondaryText
                     ),
-                    shape = RoundedCornerShape(12.dp),
-                    textStyle = TextStyle(fontSize = 15.sp),
+                    shape = MaterialTheme.shapes.medium,
+                    textStyle = MaterialTheme.typography.bodyLarge,
                 )
 
                 ExposedDropdownMenu(
                     expanded = secondaryExpanded,
                     onDismissRequest = { secondaryExpanded = false },
-                    modifier = Modifier.background(FlowpayMediumGray)
+                    modifier = Modifier.background(WavePaySurface)
                 ) {
                     secondarySimOptions.forEach { (value, label) ->
                         DropdownMenuItem(
                             text = {
                                 Text(
                                     label,
-                                    color = FlowpayOnSurface,
-                                    fontSize = 15.sp
+                                    color = WavePayInk,
+                                    style = MaterialTheme.typography.bodyLarge
                                 )
                             },
                             onClick = {
                                 onSecondarySimSelected(value)
                                 secondaryExpanded = false
                             },
-                            modifier = Modifier.background(FlowpayMediumGray)
+                            modifier = Modifier.background(WavePaySurface)
                         )
                     }
                 }
@@ -620,92 +596,48 @@ fun DisclaimerSection(
     isAccepted: Boolean,
     onAcceptedChange: (Boolean) -> Unit
 ) {
-    val accent = LocalFlowpayAccentTheme.current
     var isExpanded by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(FlowpaySurfaceDim, RoundedCornerShape(20.dp))
-            .padding(18.dp)
-    ) {
+    SectionCard {
         SetupSectionHeader(
-            icon = Icons.Outlined.Info,
+            icon = Icons.Rounded.Info,
             title = stringResource(R.string.disclaimer),
             subtitle = stringResource(R.string.setup_please_read_before_continuing)
         )
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(Spacing.small))
 
-        // Disclaimer body
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                verticalAlignment = Alignment.Top
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(Spacing.small)
+        ) {
+            Checkbox(
+                checked = isAccepted,
+                onCheckedChange = onAcceptedChange,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = WavePayBrand,
+                    uncheckedColor = WavePayOutline
+                )
+            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Spacing.small)
             ) {
-                // Circular Checkbox — independent tap zone for accepting
-                Box(
-                    modifier = Modifier
-                        .padding(top = 2.dp)
-                        .size(22.dp)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { onAcceptedChange(!isAccepted) }
-                        .border(
-                            width = 2.dp,
-                            color = if (isAccepted) accent.accent else FlowpayDisabledGray,
-                            shape = CircleShape
-                        )
-                        .background(
-                            color = if (isAccepted) accent.accent else Color.Transparent,
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isAccepted) {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .background(Color.White, CircleShape)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(14.dp))
-
-                // Text area — independent tap zone for expanding/collapsing
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { isExpanded = !isExpanded }
-                ) {
+                Text(
+                    text = stringResource(
+                        if (isExpanded) R.string.disclaimer_text else R.string.disclaimer_summary
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = WavePaySecondaryText
+                )
+                TextButton(onClick = { isExpanded = !isExpanded }) {
                     Text(
                         text = stringResource(
-                            if (isExpanded) {
-                                R.string.disclaimer_text
-                            } else {
-                                R.string.disclaimer_summary
-                            }
+                            if (isExpanded) R.string.setup_show_less else R.string.setup_show_more
                         ),
-                        fontSize = 14.sp,
-                        color = FlowpayTextSecondary,
-                        lineHeight = 20.sp
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = stringResource(
-                            if (isExpanded) {
-                                R.string.setup_show_less
-                            } else {
-                                R.string.setup_show_more
-                            }
-                        ),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = accent.accent
+                        style = MaterialTheme.typography.labelLarge,
+                        color = WavePayBrand
                     )
                 }
             }
@@ -718,51 +650,10 @@ fun CompleteSetupButton(
     enabled: Boolean,
     onCompleteSetup: () -> Unit
 ) {
-    val accent = LocalFlowpayAccentTheme.current
-    val buttonShape = RoundedCornerShape(16.dp)
-
-    val gradientColors = if (enabled) {
-        listOf(accent.headerGradientStart, accent.headerGradientEnd)
-    } else {
-        listOf(FlowpayLightGray, FlowpayMediumGray)
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(
-                brush = Brush.linearGradient(gradientColors),
-                shape = buttonShape
-            )
-            .border(
-                width = 1.dp,
-                color = Color.White.copy(alpha = if (enabled) 0.15f else 0.05f),
-                shape = buttonShape
-            )
-            .clip(buttonShape)
-            .clickable(enabled = enabled) { onCompleteSetup() }
-            .alpha(if (enabled) 1f else 0.4f),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(R.string.complete_setup),
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = (-0.3).sp
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
+    PrimaryButton(
+        text = stringResource(R.string.complete_setup),
+        onClick = onCompleteSetup,
+        modifier = Modifier.fillMaxWidth(),
+        enabled = enabled
+    )
 }

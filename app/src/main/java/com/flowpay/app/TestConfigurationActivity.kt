@@ -9,53 +9,54 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.AccountBalanceWallet
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Call
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.flowpay.app.constants.PermissionConstants
 import com.flowpay.app.helpers.SetupHelper
 import com.flowpay.app.helpers.TestConfigurationHelper
 import com.flowpay.app.managers.CallType
 import com.flowpay.app.ui.dialogs.Upi123ProgressDialog
 import com.flowpay.app.ui.dialogs.UssdProgressDialog
-import com.flowpay.app.ui.theme.BlueAccentTheme
+import com.flowpay.app.ui.components.PrimaryButton
+import com.flowpay.app.ui.components.SectionCard
+import com.flowpay.app.ui.components.SecondaryButton
+import com.flowpay.app.ui.components.WaveHeader
 import com.flowpay.app.ui.theme.FlowpayAccentGreen
-import com.flowpay.app.ui.theme.FlowpaySurface
-import com.flowpay.app.ui.theme.FlowpayLightGray
-import com.flowpay.app.ui.theme.FlowpayMediumGray
 import com.flowpay.app.ui.theme.FlowpayStatusWarning
-import com.flowpay.app.ui.theme.FlowpaySurfaceDim
-import com.flowpay.app.ui.theme.FlowpayTextGray
-import com.flowpay.app.ui.theme.FlowpayTextSecondary
-import com.flowpay.app.ui.theme.FlowpayOnSurface
-import com.flowpay.app.ui.theme.FlowpayTextPale
+import com.flowpay.app.ui.theme.Spacing
 import com.flowpay.app.ui.theme.FlowpayTheme
-import com.flowpay.app.ui.theme.LocalFlowpayAccentTheme
+import com.flowpay.app.ui.theme.WavePayBrand
+import com.flowpay.app.ui.theme.WavePayBrandTint
+import com.flowpay.app.ui.theme.WavePayCanvas
+import com.flowpay.app.ui.theme.WavePayInk
+import com.flowpay.app.ui.theme.WavePayOnBrand
+import com.flowpay.app.ui.theme.WavePayOutline
+import com.flowpay.app.ui.theme.WavePaySecondaryText
+import com.flowpay.app.ui.theme.WavePaySurface
 import kotlinx.coroutines.delay
 
 class TestConfigurationActivity : ComponentActivity() {
@@ -153,10 +154,8 @@ class TestConfigurationActivity : ComponentActivity() {
         // Edge-to-edge: Compose insets are the single source of padding (see MainActivity).
         androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            CompositionLocalProvider(LocalFlowpayAccentTheme provides BlueAccentTheme) {
-                FlowpayTheme {
-                    TestConfigurationScreen(testHelper = testHelper)
-                }
+            FlowpayTheme {
+                TestConfigurationScreen(testHelper = testHelper)
             }
         }
     }
@@ -175,7 +174,6 @@ class TestConfigurationActivity : ComponentActivity() {
 @Composable
 fun TestConfigurationScreen(testHelper: TestConfigurationHelper) {
     val context = LocalContext.current
-    val accent = LocalFlowpayAccentTheme.current
 
     // Get test states from helper
     val testStates = testHelper.getTestStates()
@@ -192,6 +190,9 @@ fun TestConfigurationScreen(testHelper: TestConfigurationHelper) {
     var showUpi123ConfigurationOptions by remember { mutableStateOf(testStates.showUpi123ConfigurationOptions) }
     var ussdProgressMessage by remember { mutableStateOf(testStates.ussdProgressMessage) }
     var showCallCompleteButton by remember { mutableStateOf(testStates.showCallCompleteButton) }
+    var currentTestStep by remember { mutableStateOf(0) }
+    val isJioSim = !SetupHelper.isPrimarySimUssdCapable(context)
+    val userReportedUssdIssue = SetupHelper.hasUserReportedUssdNotWorking(context)
 
     // Load existing test results
     LaunchedEffect(Unit) {
@@ -237,68 +238,60 @@ fun TestConfigurationScreen(testHelper: TestConfigurationHelper) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(FlowpaySurfaceDim)
+            .background(WavePayCanvas)
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .widthIn(max = 420.dp)
-                .align(Alignment.Center)
-                .background(FlowpaySurfaceDim)
+                .align(Alignment.TopCenter)
+                .widthIn(max = 520.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
                 .statusBarsPadding()
                 .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
+                .padding(horizontal = Spacing.medium, vertical = Spacing.medium),
+            verticalArrangement = Arrangement.spacedBy(Spacing.medium)
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Back to Setup
-            Row(
+            TextButton(
+                onClick = {
+                    context.startActivity(Intent(context, SetupActivity::class.java))
+                    (context as? android.app.Activity)?.finish()
+                },
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .clickable {
-                        context.startActivity(Intent(context, SetupActivity::class.java))
-                        (context as? android.app.Activity)?.finish()
-                    }
-                    .padding(vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth()
+                    .wrapContentWidth(Alignment.Start),
+                contentPadding = PaddingValues(horizontal = Spacing.small, vertical = Spacing.tiny)
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.testcfg_back),
-                    tint = FlowpayTextSecondary,
-                    modifier = Modifier.size(18.dp)
+                    imageVector = Icons.Rounded.ArrowBack,
+                    contentDescription = null,
+                    tint = WavePaySecondaryText,
+                    modifier = Modifier.size(20.dp)
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(Spacing.small))
                 Text(
                     text = stringResource(R.string.testcfg_back_to_setup),
-                    fontSize = 14.sp,
-                    color = FlowpayTextSecondary,
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.labelLarge,
+                    color = WavePaySecondaryText
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Gradient Header Card
             TestHeaderCard()
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Test Instructions
             TestInstructions()
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = stringResource(R.string.testcfg_substep, currentTestStep + 1),
+                style = MaterialTheme.typography.labelLarge,
+                color = WavePaySecondaryText
+            )
+            TestSubstepProgress(currentStep = currentTestStep)
 
-            // Test Buttons Container
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // USSD Test Button
-                val isJioSim = !SetupHelper.isPrimarySimUssdCapable(context)
-                val userReportedUssdIssue = SetupHelper.hasUserReportedUssdNotWorking(context)
+            if (currentTestStep == 0) {
+                Text(
+                    text = stringResource(R.string.testcfg_step_ussd_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = WavePayInk
+                )
                 TestButton(
                     title = stringResource(R.string.testcfg_set_up),
                     code = stringResource(R.string.testcfg_code_ussd),
@@ -328,8 +321,17 @@ fun TestConfigurationScreen(testHelper: TestConfigurationHelper) {
                         }
                     }
                 )
-
-                // UPI123 Test Button
+                PrimaryButton(
+                    text = stringResource(R.string.testcfg_next_upi123),
+                    onClick = { currentTestStep = 1 },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.testcfg_step_upi123_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = WavePayInk
+                )
                 TestButton(
                     title = stringResource(R.string.testcfg_set_up),
                     code = stringResource(R.string.testcfg_code_upi123),
@@ -345,68 +347,41 @@ fun TestConfigurationScreen(testHelper: TestConfigurationHelper) {
                         }
                     }
                 )
-            }
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            // Continue Button — Gradient
-            val canContinue = testHelper.canContinue()
-            val allTestsCompleted = testHelper.allTestsCompleted()
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(58.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        brush = if (canContinue) {
-                            Brush.horizontalGradient(
-                                colors = listOf(accent.headerGradientStart, accent.headerGradientEnd)
-                            )
-                        } else {
-                            Brush.horizontalGradient(
-                                colors = listOf(FlowpayLightGray, FlowpayMediumGray)
-                            )
-                        }
-                    )
-                    .then(
-                        if (canContinue) {
-                            Modifier.clickable { testHelper.continueToMain() }
-                        } else {
-                            Modifier
-                        }
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = when {
-                        allTestsCompleted -> stringResource(R.string.testcfg_all_tests_passed_continue)
-                        canContinue -> stringResource(R.string.testcfg_continue_partial)
-                        else -> stringResource(R.string.testcfg_complete_tests_to_continue)
-                    },
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = if (canContinue) Color.White else FlowpayTextGray
+                SecondaryButton(
+                    text = stringResource(R.string.testcfg_back_to_ussd),
+                    onClick = { currentTestStep = 0 },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
+
+            val canContinue = testHelper.canContinue()
+            val allTestsCompleted = testHelper.allTestsCompleted()
+            PrimaryButton(
+                text = stringResource(
+                    when {
+                        allTestsCompleted -> R.string.testcfg_all_tests_passed_continue
+                        canContinue -> R.string.testcfg_continue_partial
+                        else -> R.string.testcfg_complete_tests_to_continue
+                    }
+                ),
+                onClick = { testHelper.continueToMain() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = canContinue
+            )
 
             // Skip path: a failed/hanging *99# test must never trap the
             // user on this screen. Skipping persists completion and the
             // tests can be re-run later from Settings > Reconfigure.
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = stringResource(R.string.testcfg_skip_for_now),
-                fontSize = 13.sp,
-                color = FlowpayTextSecondary,
-                textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .clickable { testHelper.skipTests() }
-                    .padding(8.dp)
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
+            TextButton(
+                onClick = { testHelper.skipTests() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.testcfg_skip_for_now),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = WavePaySecondaryText
+                )
+            }
         }
 
         // USSD Progress Dialog
@@ -433,21 +408,19 @@ fun TestConfigurationScreen(testHelper: TestConfigurationHelper) {
         pendingDial?.let { dial ->
             AlertDialog(
                 onDismissRequest = { pendingDial = null },
-                containerColor = FlowpaySurface,
-                titleContentColor = FlowpayOnSurface,
-                textContentColor = FlowpayTextPale,
+                containerColor = WavePaySurface,
+                titleContentColor = WavePayInk,
+                textContentColor = WavePaySecondaryText,
                 title = {
                     Text(
                         stringResource(R.string.testcfg_consent_title),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp
+                        style = MaterialTheme.typography.titleLarge
                     )
                 },
                 text = {
                     Text(
                         stringResource(R.string.testcfg_call_consent_body),
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 },
                 confirmButton = {
@@ -455,12 +428,19 @@ fun TestConfigurationScreen(testHelper: TestConfigurationHelper) {
                         pendingDial = null
                         dial()
                     }) {
-                        Text(stringResource(R.string.action_continue), fontWeight = FontWeight.SemiBold)
+                        Text(
+                            stringResource(R.string.action_continue),
+                            style = MaterialTheme.typography.labelLarge
+                        )
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { pendingDial = null }) {
-                        Text(stringResource(R.string.action_cancel), color = FlowpayTextSecondary)
+                        Text(
+                            stringResource(R.string.action_cancel),
+                            color = WavePaySecondaryText,
+                            style = MaterialTheme.typography.labelLarge
+                        )
                     }
                 }
             )
@@ -470,133 +450,90 @@ fun TestConfigurationScreen(testHelper: TestConfigurationHelper) {
 
 @Composable
 fun TestHeaderCard() {
-    val accent = LocalFlowpayAccentTheme.current
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        accent.headerGradientStart,
-                        accent.headerGradientEnd
-                    )
-                )
-            )
-    ) {
+    WaveHeader(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
+                .padding(Spacing.large),
+            verticalArrangement = Arrangement.spacedBy(Spacing.medium)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Spacing.medium)
             ) {
-                // Icon in frosted circle
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
-                        .background(
-                            color = Color.White.copy(alpha = 0.22f),
-                            shape = CircleShape
-                        ),
+                        .size(48.dp)
+                        .background(WavePayOnBrand.copy(alpha = 0.18f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = CheckCircleIcon,
-                        contentDescription = stringResource(R.string.testcfg_header_icon_desc),
-                        tint = Color.White,
+                        imageVector = Icons.Rounded.CheckCircle,
+                        contentDescription = null,
+                        tint = WavePayOnBrand,
                         modifier = Modifier.size(24.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.width(14.dp))
-
-                Column {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.tiny)
+                ) {
                     Text(
                         text = stringResource(R.string.testcfg_title),
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        letterSpacing = 0.3.sp
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = WavePayOnBrand
                     )
                     Text(
                         text = stringResource(R.string.testcfg_step),
-                        fontSize = 14.sp,
-                        color = Color.White.copy(alpha = 0.7f),
-                        fontWeight = FontWeight.Medium
+                        style = MaterialTheme.typography.labelLarge,
+                        color = WavePayOnBrand.copy(alpha = 0.86f)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
             Text(
                 text = stringResource(R.string.testcfg_intro),
-                fontSize = 15.sp,
-                color = Color.White.copy(alpha = 0.85f),
-                fontWeight = FontWeight.Normal,
-                lineHeight = 22.sp
+                style = MaterialTheme.typography.bodyLarge,
+                color = WavePayOnBrand
             )
-
-            Spacer(modifier = Modifier.height(18.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ProgressDot(isActive = false)
-                ProgressDot(isActive = true)
-            }
         }
     }
 }
 
 @Composable
-fun ProgressDot(isActive: Boolean) {
-    Box(
-        modifier = Modifier
-            .width(if (isActive) 24.dp else 8.dp)
-            .height(8.dp)
-            .background(
-                color = if (isActive) Color.White else Color.White.copy(alpha = 0.4f),
-                shape = if (isActive) RoundedCornerShape(4.dp) else CircleShape
+private fun TestSubstepProgress(currentStep: Int) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.tiny)
+    ) {
+        repeat(2) { step ->
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(4.dp)
+                    .background(
+                        color = if (step <= currentStep) WavePayBrand else WavePayOutline,
+                        shape = CircleShape
+                    )
             )
-    )
+        }
+    }
 }
 
 @Composable
 fun TestInstructions() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .background(FlowpaySurfaceDim, RoundedCornerShape(20.dp))
-            .padding(16.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(R.string.testcfg_instructions_title),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = FlowpayOnSurface,
-                letterSpacing = 0.3.sp
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = stringResource(R.string.testcfg_instructions_body),
-                fontSize = 13.sp,
-                color = FlowpayTextSecondary,
-                lineHeight = 19.sp,
-                textAlign = TextAlign.Center
-            )
-        }
+    SectionCard {
+        Text(
+            text = stringResource(R.string.testcfg_instructions_title),
+            style = MaterialTheme.typography.titleMedium,
+            color = WavePayInk
+        )
+        Text(
+            text = stringResource(R.string.testcfg_instructions_body),
+            style = MaterialTheme.typography.bodyLarge,
+            color = WavePaySecondaryText
+        )
     }
 }
 
@@ -610,38 +547,37 @@ fun TestButton(
     isUnsupported: Boolean = false,
     onClick: () -> Unit
 ) {
-    val accent = LocalFlowpayAccentTheme.current
-
     val iconBgColor = when {
         isUnsupported -> FlowpayStatusWarning.copy(alpha = 0.15f)
         isCompleted -> FlowpayAccentGreen.copy(alpha = 0.15f)
-        else -> accent.primary.copy(alpha = 0.15f)
+        else -> WavePayBrandTint
     }
     val iconTint = when {
         isUnsupported -> FlowpayStatusWarning
         isCompleted -> FlowpayAccentGreen
-        else -> accent.primary
+        else -> WavePayBrand
     }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = FlowpaySurfaceDim),
+            .clickable(role = Role.Button, onClick = onClick),
+        shape = MaterialTheme.shapes.large,
+        border = BorderStroke(1.dp, WavePayOutline),
+        colors = CardDefaults.cardColors(containerColor = WavePaySurface),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 18.dp),
+                .heightIn(min = Spacing.touchTarget)
+                .padding(horizontal = Spacing.medium, vertical = Spacing.medium),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.medium)
         ) {
-            // Icon circle
             Box(
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(48.dp)
                     .background(
                         color = iconBgColor,
                         shape = CircleShape
@@ -649,47 +585,44 @@ fun TestButton(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = if (code == stringResource(R.string.testcfg_code_ussd)) UssdIcon else UpiIcon,
+                    imageVector = if (code == stringResource(R.string.testcfg_code_ussd)) {
+                        Icons.Rounded.Call
+                    } else {
+                        Icons.Rounded.AccountBalanceWallet
+                    },
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
 
-            // Text content
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Spacing.tiny)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Text(
-                        text = title,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (isUnsupported) FlowpayStatusWarning else FlowpayOnSurface
-                    )
-                    Text(
-                        text = code,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isUnsupported) FlowpayStatusWarning else accent.accent,
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(3.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (isUnsupported) FlowpayStatusWarning else WavePayInk
+                )
+                Text(
+                    text = code,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (isUnsupported) FlowpayStatusWarning else WavePayBrand,
+                    fontFamily = FontFamily.Monospace
+                )
 
                 Text(
                     text = description,
-                    fontSize = 13.sp,
-                    color = if (isUnsupported) FlowpayStatusWarning.copy(alpha = 0.8f) else FlowpayTextSecondary,
-                    lineHeight = 18.sp
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (isUnsupported) {
+                        FlowpayStatusWarning
+                    } else {
+                        WavePaySecondaryText
+                    }
                 )
             }
 
-            // Status indicator
             Box(
                 modifier = Modifier.size(28.dp),
                 contentAlignment = Alignment.Center
@@ -698,9 +631,9 @@ fun TestButton(
                     isTesting -> {
                         CircularProgressIndicator(
                             modifier = Modifier.size(22.dp),
-                            color = accent.primary,
+                            color = WavePayBrand,
                             strokeWidth = 2.5.dp,
-                            trackColor = FlowpayLightGray
+                            trackColor = WavePayOutline
                         )
                     }
                     isUnsupported -> {
@@ -712,9 +645,8 @@ fun TestButton(
                         ) {
                             Text(
                                 text = stringResource(R.string.testcfg_unsupported_symbol),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                style = MaterialTheme.typography.labelLarge,
+                                color = WavePayInk
                             )
                         }
                     }
@@ -726,9 +658,9 @@ fun TestButton(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = CheckIcon,
+                                imageVector = Icons.Rounded.Check,
                                 contentDescription = stringResource(R.string.testcfg_status_completed),
-                                tint = Color.White,
+                                tint = WavePayOnBrand,
                                 modifier = Modifier.size(14.dp)
                             )
                         }
@@ -737,7 +669,7 @@ fun TestButton(
                         Box(
                             modifier = Modifier
                                 .size(24.dp)
-                                .border(1.5.dp, FlowpayLightGray, CircleShape)
+                                .border(1.5.dp, WavePayOutline, CircleShape)
                         )
                     }
                 }
