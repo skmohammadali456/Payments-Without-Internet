@@ -13,19 +13,19 @@ import androidx.core.view.WindowCompat
 import com.flowpay.app.utils.findComponentActivity
 
 private val LightColorScheme = lightColorScheme(
-    primary = FlowpayAccent,
-    onPrimary = FlowpayOnSurface,
-    secondary = FlowpayAccent,
-    onSecondary = FlowpayOnSurface,
-    tertiary = FlowpayAccent,
-    background = FlowpaySurfaceDim,
-    onBackground = FlowpayOnSurface,
-    surface = FlowpaySurface,
-    onSurface = FlowpayOnSurface,
-    surfaceVariant = FlowpayMediumGray,
-    onSurfaceVariant = FlowpayTextSecondary,
-    outline = FlowpayOutlineGray,
-    error = FlowpayStatusError
+    primary = WavePayBrand,
+    onPrimary = WavePayOnBrand,
+    secondary = WavePayBrand,
+    onSecondary = WavePayOnBrand,
+    tertiary = WavePayBrand,
+    background = WavePayCanvas,
+    onBackground = WavePayInk,
+    surface = WavePaySurface,
+    onSurface = WavePayInk,
+    surfaceVariant = WavePayStatusNeutralTint,
+    onSurfaceVariant = WavePaySecondaryText,
+    outline = WavePayOutline,
+    error = WavePayStatusDanger
 )
 
 @Composable
@@ -36,8 +36,8 @@ fun FlowpayTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = view.context.findComponentActivity()?.window ?: return@SideEffect
-            window.statusBarColor = FlowpaySurfaceDim.toArgb()
-            window.navigationBarColor = FlowpaySurfaceDim.toArgb()
+            window.statusBarColor = WavePayCanvas.toArgb()
+            window.navigationBarColor = WavePayCanvas.toArgb()
             WindowCompat.getInsetsController(window, view).apply {
                 isAppearanceLightStatusBars = true
                 isAppearanceLightNavigationBars = true
@@ -48,6 +48,7 @@ fun FlowpayTheme(
     MaterialTheme(
         colorScheme = LightColorScheme,
         typography = Typography,
+        shapes = WavePayShapes,
         content = content
     )
 }

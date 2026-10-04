@@ -16,45 +16,44 @@ import androidx.compose.ui.graphics.Color
 // exactly one place.
 // ─────────────────────────────────────────────────────────────────────────
 
-// Surfaces (darkest → lightest)
-val FlowpaySurface = Color(0xFFFFFFFF)
+// WavePay semantic tokens. Keep legacy Flowpay names below as aliases so
+// existing screens and resource references remain source-compatible.
+val WavePayBrand = Color(0xFF0A6C8C)
+val WavePayBrandPressed = Color(0xFF084A61)
+val WavePayBrandTint = Color(0xFFE3F2F7)
+val WavePayInk = Color(0xFF0B1B26)
+val WavePaySecondaryText = Color(0xFF4A5B68)
+val WavePayCanvas = Color(0xFFF4F7F9)
+val WavePaySurface = Color(0xFFFFFFFF)
+val WavePayOutline = Color(0xFFDDE5EA)
 
-/** Screen background behind cards/lists. */
-val FlowpaySurfaceDim = Color(0xFFF5F7F8)
+val WavePayStatusSuccess = Color(0xFF146C43)
+val WavePayStatusSuccessTint = Color(0xFFE6F4EC)
+val WavePayStatusDanger = Color(0xFFB42318)
+val WavePayStatusDangerTint = Color(0xFFFDECEA)
+val WavePayStatusWarning = Color(0xFF8A4B08)
+val WavePayStatusWarningTint = Color(0xFFFDF0DC)
+val WavePayStatusNeutral = Color(0xFF667085)
+val WavePayStatusNeutralTint = Color(0xFFEEF1F4)
+val WavePayOnBrand = Color(0xFFFFFFFF)
 
-/** Elevated surface: input fields, chips, avatars. */
-val FlowpayMediumGray = Color(0xFFEEF2F4)
-
-/** Borders, dividers, inactive track. */
-val FlowpayLightGray = Color(0xFFD0D8DC)
-
-/** Stronger outline / disabled container. */
-val FlowpayOutlineGray = Color(0xFF667780)
-
-/** Disabled content / faint hint. */
-val FlowpayDisabledGray = Color(0xFF667780)
-
-// Text (dimmest → brightest)
-/** Placeholder / hint text. */
-val FlowpayTextGray = Color(0xFF667085)
-
-/** Secondary text: captions, labels, timestamps. */
-val FlowpayTextSecondary = Color(0xFF475467)
-
-/** Long-form body text on surfaces. */
-val FlowpayTextPale = Color(0xFF344054)
-
-val FlowpayOnSurface = Color(0xFF101828)
-
-// Card Colors (light card variant)
-val FlowpayCardBackground = Color(0xFFFFFFFF)
-val FlowpayCardText = Color(0xFF101828)
-val FlowpayCardSubtext = Color(0xFF475467)
-
-// Accents
-val FlowpayAccent = Color(0xFF155B73)
-val FlowpayAccentGreen = Color(0xFF146C43)
-val FlowpayAccentGreenBright = Color(0xFF146C43)
+// Existing tokens retained as aliases for call sites migrated in later phases.
+val FlowpaySurface = WavePaySurface
+val FlowpaySurfaceDim = WavePayCanvas
+val FlowpayMediumGray = WavePayStatusNeutralTint
+val FlowpayLightGray = WavePayOutline
+val FlowpayOutlineGray = WavePayOutline
+val FlowpayDisabledGray = WavePaySecondaryText
+val FlowpayTextGray = WavePayStatusNeutral
+val FlowpayTextSecondary = WavePaySecondaryText
+val FlowpayTextPale = WavePayInk
+val FlowpayOnSurface = WavePayInk
+val FlowpayCardBackground = WavePaySurface
+val FlowpayCardText = WavePayInk
+val FlowpayCardSubtext = WavePaySecondaryText
+val FlowpayAccent = WavePayBrand
+val FlowpayAccentGreen = WavePayStatusSuccess
+val FlowpayAccentGreenBright = WavePayStatusSuccess
 
 // ─────────────────────────────────────────────────────────────────────────
 // Transaction status palette. One color per outcome, used identically in
@@ -63,17 +62,17 @@ val FlowpayAccentGreenBright = Color(0xFF146C43)
 // ─────────────────────────────────────────────────────────────────────────
 
 /** SUCCESS — bank confirmed. */
-val FlowpayStatusSuccess = Color(0xFF146C43)
+val FlowpayStatusSuccess = WavePayStatusSuccess
 
 /** FAILED / declined, and destructive actions (delete, clear). */
-val FlowpayStatusError = Color(0xFFB42318)
+val FlowpayStatusError = WavePayStatusDanger
 
 /** NEEDS_REVIEW / PENDING — user attention required. */
-val FlowpayStatusWarning = Color(0xFF8A4B08)
+val FlowpayStatusWarning = WavePayStatusWarning
 
 /** UNVERIFIED / CANCELLED — outcome unknown or nothing happened. Neutral:
  *  deliberately neither success-green nor failure-red. */
-val FlowpayStatusNeutral = Color(0xFF667085)
+val FlowpayStatusNeutral = WavePayStatusNeutral
 
 /**
  * The single mapping from a [com.flowpay.app.data.TransactionStatus] string

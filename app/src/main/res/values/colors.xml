@@ -5,11 +5,11 @@
     <color name="flowpay_green">#FF146C43</color>
     
     <!-- Setup Screen Colors -->
-    <color name="setup_text_secondary">#FF475467</color>
-    <color name="setup_text_tertiary">#FF344054</color>
+    <color name="setup_text_secondary">#FF4A5B68</color>
+    <color name="setup_text_tertiary">#FF0B1B26</color>
 
     <!-- Payment Success Colors -->
-    <color name="transaction_primary">#FF155B73</color>
+    <color name="transaction_primary">#FF0A6C8C</color>
 
     <!-- QR Scanner Colors -->
 
@@ -20,26 +20,44 @@
     <color name="unverified_grey">#FF667085</color>
 
     <!-- General UI Colors -->
-    <color name="background_secondary">#FFF5F7F8</color>
-    <color name="screen_background">#FFF5F7F8</color>
+    <color name="background_secondary">#FFF4F7F9</color>
+    <color name="screen_background">#FFF4F7F9</color>
     <color name="surface_card_light">#FFFFFFFF</color>
-    <color name="text_primary_light">#FF101828</color>
-    <color name="text_secondary_light">#FF475467</color>
-    <color name="outline_light">#FFD0D8DC</color>
+    <color name="text_primary_light">#FF0B1B26</color>
+    <color name="text_secondary_light">#FF4A5B68</color>
+    <color name="outline_light">#FFDDE5EA</color>
+
+    <!-- WavePay semantic palette. Existing resource names above stay stable. -->
+    <color name="wavepay_brand">#FF0A6C8C</color>
+    <color name="wavepay_brand_pressed">#FF084A61</color>
+    <color name="wavepay_brand_tint">#FFE3F2F7</color>
+    <color name="wavepay_ink">#FF0B1B26</color>
+    <color name="wavepay_secondary_text">#FF4A5B68</color>
+    <color name="wavepay_canvas">#FFF4F7F9</color>
+    <color name="wavepay_surface">#FFFFFFFF</color>
+    <color name="wavepay_outline">#FFDDE5EA</color>
+    <color name="status_success">#FF146C43</color>
+    <color name="status_success_tint">#FFE6F4EC</color>
+    <color name="status_danger">#FFB42318</color>
+    <color name="status_danger_tint">#FFFDECEA</color>
+    <color name="status_warning">#FF8A4B08</color>
+    <color name="status_warning_tint">#FFFDF0DC</color>
+    <color name="status_neutral">#FF667085</color>
+    <color name="status_neutral_tint">#FFEEF1F4</color>
 
     <!-- Dark-theme View/XML tokens (Compose screens use ui/theme/Color.kt;
          these mirror the same ramp for the classic-View layouts). -->
     <color name="surface_card_dark">#FFFFFFFF</color>
-    <color name="surface_deep_dark">#FFF5F7F8</color>
-    <color name="divider_dark">#FFD0D8DC</color>
-    <color name="text_secondary_dark">#FF475467</color>
+    <color name="surface_deep_dark">#FFF4F7F9</color>
+    <color name="divider_dark">#FFDDE5EA</color>
+    <color name="text_secondary_dark">#FF4A5B68</color>
 
     <!-- In-call overlay card (light "frosted" surface — its own mini palette) -->
-    <color name="overlay_text_primary">#FF101828</color>
-    <color name="overlay_text_secondary">#FF475467</color>
-    <color name="overlay_icon_gray">#FF344054</color>
-    <color name="overlay_divider_light">#FFD0D8DC</color>
+    <color name="overlay_text_primary">#FF0B1B26</color>
+    <color name="overlay_text_secondary">#FF4A5B68</color>
+    <color name="overlay_icon_gray">#FF0B1B26</color>
+    <color name="overlay_divider_light">#FFDDE5EA</color>
     <color name="overlay_alert_red">#FFB42318</color>
     <!-- Backing for the QR scanner's inline "not a valid UPI QR" banner -->
-    <color name="scan_error_banner_bg">#FFFEE4E2</color>
+    <color name="scan_error_banner_bg">#FFFDECEA</color>
 </resources>
